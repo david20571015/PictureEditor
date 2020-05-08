@@ -12,6 +12,7 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.TreeView?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
@@ -69,7 +70,10 @@
                                     <Hyperlink text="File" />
                                  </children>
                               </FlowPane>
-                              <Pane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+                              <Pane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                 <children>
+                                    <ImageView fx:id="imageView" fitHeight="496.0" fitWidth="567.0" layoutX="1.0" layoutY="-2.0" onDragDropped="#imageViewDropped" onDragOver="#imageViewDragOver" pickOnBounds="true" preserveRatio="true" />
+                                 </children></Pane>
                            </children>
                         </VBox>
                      </content>
