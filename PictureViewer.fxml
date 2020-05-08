@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
@@ -12,21 +11,21 @@
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-
-<VBox prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<VBox prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="PictureViewerController">
    <children>
       <MenuBar VBox.vgrow="NEVER">
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
-              <MenuItem mnemonicParsing="false" text="Open" />
-                  <MenuItem mnemonicParsing="false" text="Save" />
+              <MenuItem fx:id="openMenuItem" mnemonicParsing="false" onAction="#openMenuItemOnAction" onMenuValidation="#openMenuItemOnAction" text="Open" />
+                  <MenuItem fx:id="saveMenuItem" mnemonicParsing="false" text="Save" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Edit">
@@ -43,19 +42,25 @@
       </MenuBar>
       <SplitPane dividerPositions="0.16592427616926503, 0.8040089086859689" VBox.vgrow="ALWAYS">
         <items>
-            <Accordion SplitPane.resizableWithParent="false">
-              <panes>
-                <TitledPane animated="false" text="Editer" />
-                <TitledPane animated="false" text="Folder Name" />
-              </panes>
-            </Accordion>
+            <VBox SplitPane.resizableWithParent="false">
+               <children>
+                <TitledPane animated="false" maxHeight="1.7976931348623157E308" text="Editer">
+                     <content>
+                        <TreeView prefHeight="200.0" prefWidth="200.0" />
+                     </content></TitledPane>
+                <TitledPane fx:id="folderTree" animated="false" maxHeight="1.7976931348623157E308" text="Folder Name">
+                     <content>
+                        <TreeView prefHeight="200.0" prefWidth="200.0" />
+                     </content></TitledPane>
+               </children>
+            </VBox>
             <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
               <tabs>
                 <Tab text="File Name">
                      <content>
                         <VBox prefHeight="200.0" prefWidth="100.0">
                            <children>
-                              <FlowPane fx:id="filePath" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" VBox.vgrow="NEVER">
+                              <FlowPane maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" VBox.vgrow="NEVER">
                                  <children>
                                     <Hyperlink text="Folder" />
                                     <Label text="&gt;" />
@@ -71,25 +76,25 @@
                 </Tab>
               </tabs>
             </TabPane>
-            <Accordion SplitPane.resizableWithParent="false">
-              <panes>
-                <TitledPane animated="false" text="Tool Box 1">
+            <VBox SplitPane.resizableWithParent="false">
+               <children>
+                <TitledPane animated="false" maxHeight="1.7976931348623157E308" text="Tool Box 1">
                   <content>
-                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                    <AnchorPane maxHeight="1.7976931348623157E308" />
                   </content>
                 </TitledPane>
-                <TitledPane animated="false" text="Tool Box 2">
+                <TitledPane animated="false" maxHeight="1.7976931348623157E308" text="Tool Box 2">
                   <content>
-                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                    <AnchorPane maxHeight="1.7976931348623157E308" />
                   </content>
                 </TitledPane>
-                <TitledPane animated="false" text="Tool Box 3">
+                <TitledPane animated="false" maxHeight="1.7976931348623157E308" text="Tool Box 3">
                   <content>
-                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                    <AnchorPane maxHeight="1.7976931348623157E308" />
                   </content>
                 </TitledPane>
-              </panes>
-            </Accordion>
+               </children>
+            </VBox>
         </items>
       </SplitPane>
       <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
