@@ -19,6 +19,7 @@ public class PictureViewer extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("PictureViewer.fxml"));
         Scene scene = new Scene(root);
         arg0.setScene(scene);
+        arg0.setTitle("Picture Viewer");
         arg0.show();
     }
 }

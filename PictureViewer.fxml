@@ -49,9 +49,9 @@
                      <content>
                         <TreeView prefHeight="200.0" prefWidth="200.0" />
                      </content></TitledPane>
-                <TitledPane fx:id="folderTree" animated="false" maxHeight="1.7976931348623157E308" minWidth="0.0" text="Folder">
+                <TitledPane fx:id="folderTitledPane" animated="false" maxHeight="1.7976931348623157E308" minWidth="0.0" text="Folder">
                      <content>
-                        <TreeView prefHeight="200.0" prefWidth="200.0" />
+                        <TreeView fx:id="folderTreeView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
                      </content></TitledPane>
                </children>
             </VBox>
