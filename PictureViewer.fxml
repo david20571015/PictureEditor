@@ -25,7 +25,7 @@
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
-              <MenuItem fx:id="openMenuItem" mnemonicParsing="false" onAction="#openMenuItemOnAction" onMenuValidation="#openMenuItemOnAction" text="Open" />
+              <MenuItem fx:id="openMenuItem" mnemonicParsing="false" onAction="#openMenuItemOnAction" text="Open" />
                   <MenuItem fx:id="saveMenuItem" mnemonicParsing="false" text="Save" />
             </items>
           </Menu>
@@ -45,11 +45,11 @@
         <items>
             <VBox SplitPane.resizableWithParent="false">
                <children>
-                <TitledPane animated="false" maxHeight="1.7976931348623157E308" text="Editer">
+                <TitledPane animated="false" maxHeight="1.7976931348623157E308" minWidth="0.0" text="Editer">
                      <content>
                         <TreeView prefHeight="200.0" prefWidth="200.0" />
                      </content></TitledPane>
-                <TitledPane fx:id="folderTree" animated="false" maxHeight="1.7976931348623157E308" text="Folder Name">
+                <TitledPane fx:id="folderTree" animated="false" maxHeight="1.7976931348623157E308" minWidth="0.0" text="Folder">
                      <content>
                         <TreeView prefHeight="200.0" prefWidth="200.0" />
                      </content></TitledPane>
