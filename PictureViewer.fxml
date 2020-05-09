@@ -7,6 +7,7 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
@@ -51,7 +52,7 @@
                      </content></TitledPane>
                 <TitledPane fx:id="folderTitledPane" animated="false" maxHeight="1.7976931348623157E308" minWidth="0.0" text="Folder">
                      <content>
-                        <TreeView fx:id="folderTreeView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+                        <TreeView fx:id="folderTreeView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" showRoot="false" />
                      </content></TitledPane>
                </children>
             </VBox>
@@ -61,7 +62,7 @@
                      <content>
                         <VBox prefHeight="200.0" prefWidth="100.0">
                            <children>
-                              <FlowPane maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" VBox.vgrow="NEVER">
+                              <FlowPane fx:id="folderPathFlowPane" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" VBox.vgrow="NEVER">
                                  <children>
                                     <Hyperlink text="Folder" />
                                     <Label text="&gt;" />
@@ -70,6 +71,15 @@
                                     <Hyperlink text="File" />
                                  </children>
                               </FlowPane>
+                              <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                 <content>
+                                    <FlowPane fx:id="imageFlowPane" focusTraversable="true" hgap="8.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" vgap="8.0">
+                                       <padding>
+                                          <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+                                       </padding>
+                                    </FlowPane>
+                                 </content>
+                              </ScrollPane>
                               <Pane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                                  <children>
                                     <ImageView fx:id="imageView" fitHeight="496.0" fitWidth="567.0" onDragDropped="#imageViewDropped" onDragOver="#imageViewDragOver" pickOnBounds="true" preserveRatio="true" />

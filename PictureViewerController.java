@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.TreeItem;
@@ -14,7 +15,17 @@ import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
+import javafx.scene.layout.BorderWidths;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.DirectoryChooser;
 
 public class PictureViewerController {
@@ -34,6 +45,12 @@ public class PictureViewerController {
     private TreeView<File> folderTreeView;
 
     @FXML
+    private FlowPane imageFlowPane;
+
+    @FXML
+    private FlowPane folderPathFlowPane;
+
+    @FXML
     void imageViewDragOver(DragEvent event) {
         if (event.getDragboard().hasFiles()) {
             event.acceptTransferModes(TransferMode.ANY);
@@ -45,7 +62,6 @@ public class PictureViewerController {
         List<File> file = event.getDragboard().getFiles();
         Image img = new Image(new FileInputStream(file.get(0)));
         imageView.setImage(img);
-
     }
 
     @FXML
@@ -60,8 +76,50 @@ public class PictureViewerController {
         folderTitledPane.setText(parsedPath[parsedPath.length - 1]);
 
         folderTreeView = new TreeView<File>(new FolderItem(currentFolderPath));
+        folderTreeView.setShowRoot(false);
+
+        folderTreeView.addEventHandler(MouseEvent.MOUSE_CLICKED,
+                e -> showImagesInFolder(folderTreeView.getSelectionModel().getSelectedItems().get(0)));
+
         folderTitledPane.setContent(folderTreeView);
 
+    }
+
+    private void showImagesInFolder(TreeItem<File> folderPath) {
+        File[] images = folderPath.getValue().listFiles(File::isFile);
+        imageFlowPane.getChildren().clear();
+        for (File image : images)
+            imageFlowPane.getChildren().add(new ImageFilePane(image));
+    }
+
+}
+
+class ImageFilePane extends BorderPane {
+    private Image image;
+    private String imageName;
+
+    public ImageFilePane(File imagePath) {
+        setHeight(200);
+        setWidth(200);
+        setBorder(new Border(
+                new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+
+        try {
+            this.image = new Image(new FileInputStream(imagePath), getWidth(), getHeight(), true, true);
+        } catch (Exception e) {
+            System.out.println("Unable to load image from " + imagePath);
+        }
+
+        if (this.image != null) {
+            this.imageName = imagePath.getName();
+
+            ImageView imageView = new ImageView(this.image);
+            Label label = new Label(this.imageName);
+            label.setTextAlignment(TextAlignment.CENTER);
+
+            setCenter(imageView);
+            setBottom(label);
+        }
     }
 
 }
@@ -92,6 +150,11 @@ class FolderItem extends TreeItem<File> {
             isLeaf = f.isFile();
         }
         return isLeaf;
+    }
+
+    @Override
+    public String toString() {
+        return this.getValue().getName();
     }
 
     private ObservableList<TreeItem<File>> buildChildren(TreeItem<File> treeItem) {
