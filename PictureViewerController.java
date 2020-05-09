@@ -7,14 +7,17 @@ import javafx.fxml.FXML;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Border;
@@ -30,6 +33,7 @@ import javafx.stage.DirectoryChooser;
 
 public class PictureViewerController {
     private File currentFolderPath;
+    private File currentShowFolderPath;
     private String defaultOpenFolderPath = "D:/HOMEWORK/2nd_Spring";// System.getProperty("user.home") + "/Desktop"
 
     @FXML
@@ -49,6 +53,12 @@ public class PictureViewerController {
 
     @FXML
     private FlowPane folderPathFlowPane;
+
+    @FXML
+    private Label rightStatusLabel;
+
+    @FXML
+    private ProgressBar progressBar;
 
     @FXML
     void imageViewDragOver(DragEvent event) {
@@ -86,21 +96,42 @@ public class PictureViewerController {
     }
 
     private void showImagesInFolder(TreeItem<File> folderPath) {
-        File[] images = folderPath.getValue().listFiles(File::isFile);
-        imageFlowPane.getChildren().clear();
-        for (File image : images)
-            imageFlowPane.getChildren().add(new ImageFilePane(image));
-    }
+        if (!folderPath.getValue().equals(currentShowFolderPath)) {
+            rightStatusLabel.setText("Loading images");
+            File[] images = folderPath.getValue().listFiles(File::isFile);
+            imageFlowPane.getChildren().clear();
 
+            double fileCounter = 1;
+
+            for (File image : images) {
+                ImageFilePane img = new ImageFilePane(image);
+                img.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent e) {
+                        if (e.getButton().equals(MouseButton.PRIMARY))
+                            if (e.getClickCount() == 2) {
+                                // show a new window that can edit the image
+                            }
+                    }
+                });
+                imageFlowPane.getChildren().add(img);
+                progressBar.setProgress(fileCounter++ / images.length);
+            }
+            rightStatusLabel.setText("Complete");
+
+            currentShowFolderPath = folderPath.getValue();
+        }
+    }
 }
 
 class ImageFilePane extends BorderPane {
     private Image image;
     private String imageName;
+    private File imagePath;
 
     public ImageFilePane(File imagePath) {
-        setHeight(200);
-        setWidth(200);
+        this.setHeight(300);
+        this.setWidth(200);
         setBorder(new Border(
                 new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
 
@@ -112,9 +143,21 @@ class ImageFilePane extends BorderPane {
 
         if (this.image != null) {
             this.imageName = imagePath.getName();
+            this.imagePath = imagePath;
 
             ImageView imageView = new ImageView(this.image);
+            if (this.image.getHeight() > this.image.getWidth())
+                imageView.setFitHeight(200);
+            else
+                imageView.setFitWidth(200);
+            imageView.setPreserveRatio(true);
+            imageView.setSmooth(true);
+            imageView.setCache(true);
+
             Label label = new Label(this.imageName);
+            label.setMinWidth(200);
+            label.setMaxWidth(200);
+            label.setWrapText(true);
             label.setTextAlignment(TextAlignment.CENTER);
 
             setCenter(imageView);
@@ -122,6 +165,9 @@ class ImageFilePane extends BorderPane {
         }
     }
 
+    public File getImagePath() {
+        return this.imagePath;
+    }
 }
 
 class FolderItem extends TreeItem<File> {

@@ -114,9 +114,9 @@
       <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
          <children>
             <Label maxHeight="1.7976931348623157E308" text="Left Status" HBox.hgrow="ALWAYS" />
-            <Pane prefHeight="0.0" prefWidth="733.0" HBox.hgrow="ALWAYS" />
-            <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" text="Right Status" HBox.hgrow="ALWAYS" />
-            <ProgressBar prefWidth="200.0" progress="0.0" />
+            <Pane focusTraversable="true" HBox.hgrow="ALWAYS" />
+            <Label fx:id="rightStatusLabel" alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" text="Right Status" HBox.hgrow="ALWAYS" />
+            <ProgressBar fx:id="progressBar" prefWidth="200.0" progress="0.0" />
          </children>
          <padding>
             <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
