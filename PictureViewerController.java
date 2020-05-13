@@ -39,6 +39,7 @@ public class PictureViewerController {
     private File currentFolderPath;
     private File currentShowFolderPath;
     private String defaultOpenFolderPath = "D:";// System.getProperty("user.home") + "/Desktop"
+    ImageWindow imageWindow = null;
 
     @FXML
     private MenuItem openMenuItem;
@@ -114,14 +115,15 @@ public class PictureViewerController {
                     public void handle(MouseEvent e) {
                         if (e.getButton().equals(MouseButton.PRIMARY))
                             if (e.getClickCount() == 2) {
-                                try {
-                                    Stage stage = new Stage();
-                                    Parent root = FXMLLoader.load(getClass().getResource("ImageWindow.fxml"));
-                                    Scene scene = new Scene(root);
-                                    stage.setScene(scene);
-                                    stage.setTitle("ImageWindow");
-                                    stage.show();
-                                } catch (Exception exc) {
+                                if(imageWindow == null){
+                                    imageWindow = new ImageWindow();
+                                    try {
+                                        imageWindow.setimage(image.toURI().toURL().toString());
+                                    } catch (Exception exc) {
+                                        //TODO: handle exception
+                                    }
+
+                                    imageWindow.show();
                                 }
                                 // show a new window that can edit the image
                             }
