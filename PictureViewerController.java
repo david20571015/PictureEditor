@@ -30,10 +30,6 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.DirectoryChooser;
-import javafx.stage.Stage;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 
 public class PictureViewerController {
     private File currentFolderPath;
@@ -114,15 +110,8 @@ public class PictureViewerController {
                     public void handle(MouseEvent e) {
                         if (e.getButton().equals(MouseButton.PRIMARY))
                             if (e.getClickCount() == 2) {
-                                try {
-                                    Stage stage = new Stage();
-                                    Parent root = FXMLLoader.load(getClass().getResource("ImageWindow.fxml"));
-                                    Scene scene = new Scene(root);
-                                    stage.setScene(scene);
-                                    stage.setTitle("ImageWindow");
-                                    stage.show();
-                                } catch (Exception exc) {
-                                }
+                                ImageWindow i = new ImageWindow();
+                                i.show();
                                 // show a new window that can edit the image
                             }
                     }
