@@ -29,39 +29,30 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
+
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 
 public class PictureViewerController {
     private File currentFolderPath;
     private File currentShowFolderPath;
-    private String defaultOpenFolderPath = "D:";// System.getProperty("user.home") + "/Desktop"
+    private String defaultOpenFolderPath = "C:";// System.getProperty("user.home") + "/Desktop"
     ImageWindow imageWindow = null;
 
     @FXML
     private MenuItem openMenuItem;
-
     @FXML
     private TitledPane folderTitledPane;
-
     @FXML
     private ImageView imageView;
-
     @FXML
     private TreeView<File> folderTreeView;
-
     @FXML
     private FlowPane imageFlowPane;
-
     @FXML
     private FlowPane folderPathFlowPane;
-
     @FXML
     private Label rightStatusLabel;
-
     @FXML
     private ProgressBar progressBar;
 
@@ -115,15 +106,14 @@ public class PictureViewerController {
                     public void handle(MouseEvent e) {
                         if (e.getButton().equals(MouseButton.PRIMARY))
                             if (e.getClickCount() == 2) {
-                                if(imageWindow == null){
+                                if (imageWindow == null) {
                                     imageWindow = new ImageWindow();
                                     try {
-                                        imageWindow.setimage(image.toURI().toURL().toString());
+                                        imageWindow.start(new Stage());
+                                        // System.out.println("new stage");
+                                        // imageWindow.imageWindowController.addImage(image);
                                     } catch (Exception exc) {
-                                        //TODO: handle exception
                                     }
-
-                                    imageWindow.show();
                                 }
                                 // show a new window that can edit the image
                             }

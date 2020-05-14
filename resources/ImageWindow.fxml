@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="PictureViewerController">
+<VBox prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <MenuBar VBox.vgrow="NEVER">
         <menus>
@@ -48,7 +48,7 @@
                            <children>
                               <Pane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                                  <children>
-                                    <ImageView fx:id="imageView" fitHeight="496.0" fitWidth="567.0" onDragDropped="#imageViewDropped" onDragOver="#imageViewDragOver" pickOnBounds="true" preserveRatio="true" />
+                                    <ImageView fx:id="imageView" fitHeight="496.0" fitWidth="567.0" pickOnBounds="true" preserveRatio="true" />
                                  </children></Pane>
                            </children>
                         </VBox>

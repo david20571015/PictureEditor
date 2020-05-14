@@ -1,47 +1,29 @@
-import javafx.stage.Stage;
+import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import java.net.URL;
+import javafx.stage.Stage;
 
-import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.Tab;
-import javafx.scene.image.ImageView;
-import javafx.scene.image.Image;
+public class ImageWindow extends Application {
 
-public class ImageWindow {
+    public ImageWindowController imageWindowController;// = new ImageWindowController();
 
-    @FXML private MenuItem openMenuItem;
-    @FXML private MenuItem saveMenuItem;
-    @FXML private Tab fileList;
-    @FXML private ImageView imageView;
-    @FXML private Label rightStatusLabel;
-    @FXML private ProgressBar progressBar;
+    @Override
+    public void start(Stage arg0) throws Exception {
+        FXMLLoader fxmlLoader = new FXMLLoader();
+        Parent root = fxmlLoader.load(getClass().getResource("resources/ImageWindow.fxml"));
+        // fxmlLoader.setController(imageWindowController);
 
-    Stage stage;
+        imageWindowController = fxmlLoader.getController();
 
-    public ImageWindow(){
-        try {
-            stage = new Stage();
-            Parent root = FXMLLoader.load(getClass().getResource("ImageWindow.fxml"));
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
-            stage.setTitle("ImageWindow");
-            stage.show();
-        } catch (Exception exc) {
-        }
+        System.out.println("new stage1");
+
+        // Parent root = fxmlLoader.load();
+        System.out.println("new stage2");
+
+        arg0.setScene(new Scene(root));
+        arg0.setTitle("Image Window");
+        arg0.show();
+
     }
-
-    public void show() {
-        stage.show();
-    }
-
-
-    public void setimage(String file){
-        imageView.setImage(new Image(file));
-    }
-
 }
