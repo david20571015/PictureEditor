@@ -16,7 +16,7 @@ public class PictureViewer extends Application {
 
     @Override
     public void start(Stage arg0) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("resources/PictureViewer.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("PictureViewer.fxml"));
         Scene scene = new Scene(root);
         arg0.setScene(scene);
         arg0.setTitle("Picture Viewer");

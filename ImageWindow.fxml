@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Rectangle?>
+
+<VBox prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ImageWindowController">
+  <children>
+    <MenuBar VBox.vgrow="NEVER">
+      <menus>
+        <Menu mnemonicParsing="false" text="File">
+          <items>
+            <MenuItem fx:id="openMenuItem" mnemonicParsing="false" text="Open" />
+            <MenuItem fx:id="saveMenuItem" mnemonicParsing="false" text="Save" />
+          </items>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Edit">
+          <items>
+            <MenuItem mnemonicParsing="false" text="Delete" />
+          </items>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Help">
+          <items>
+            <MenuItem mnemonicParsing="false" text="About" />
+          </items>
+        </Menu>
+      </menus>
+    </MenuBar>
+    <SplitPane dividerPositions="0.8073496659242761" maxHeight="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+      <items>
+        <TabPane fx:id="imageTabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" />
+        <VBox prefWidth="466.0" SplitPane.resizableWithParent="false">
+          <children>
+            <TitledPane animated="false" maxHeight="1.7976931348623157E308" text="Tool Box 1">
+              <content>
+                <AnchorPane maxHeight="1.7976931348623157E308" />
+              </content>
+            </TitledPane>
+            <TitledPane animated="false" maxHeight="1.7976931348623157E308" text="Tool Box 2">
+              <content>
+                <AnchorPane maxHeight="1.7976931348623157E308" />
+              </content>
+            </TitledPane>
+            <TitledPane animated="false" maxHeight="1.7976931348623157E308" text="Tool Box 3">
+              <content>
+                <AnchorPane maxHeight="1.7976931348623157E308" />
+              </content>
+            </TitledPane>
+                  <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+          </children>
+        </VBox>
+      </items>
+    </SplitPane>
+    <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+      <children>
+        <Label fx:id="sizeLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Size" />
+            <Label fx:id="zoomLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Zoom" />
+            <Label fx:id="positionLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Position" />
+            <Rectangle fx:id="colorBlock" fill="WHITE" height="15.0" stroke="BLACK" strokeType="INSIDE" width="15.0" />
+            <Label fx:id="colorLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="(r,g,b)" />
+        <Pane focusTraversable="true" HBox.hgrow="ALWAYS" />
+        <Label fx:id="rightStatusLabel" alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" text="Right Status" HBox.hgrow="ALWAYS" />
+        <ProgressBar fx:id="progressBar" prefWidth="200.0" progress="0.0" />
+      </children>
+      <padding>
+        <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+      </padding>
+    </HBox>
+  </children>
+</VBox>

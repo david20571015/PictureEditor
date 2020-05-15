@@ -1,29 +1,26 @@
-import javafx.application.Application;
+import java.io.IOException;
+
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class ImageWindow extends Application {
+public class ImageWindow extends Stage {
+    public ImageWindowController imageWindowController;
 
-    public ImageWindowController imageWindowController;// = new ImageWindowController();
+    public ImageWindow() {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("ImageWindow.fxml"));
+        try {
+            Scene scene = new Scene(loader.load());
+            this.setScene(scene);
+        } catch (IOException e) {
+            System.out.println("ImageWindow.fxml exception");
+        }
+        this.imageWindowController = loader.getController();
 
-    @Override
-    public void start(Stage arg0) throws Exception {
-        FXMLLoader fxmlLoader = new FXMLLoader();
-        Parent root = fxmlLoader.load(getClass().getResource("resources/ImageWindow.fxml"));
-        // fxmlLoader.setController(imageWindowController);
+        setOnCloseRequest(e -> this.imageWindowController.closeStage());
+    }
 
-        imageWindowController = fxmlLoader.getController();
-
-        System.out.println("new stage1");
-
-        // Parent root = fxmlLoader.load();
-        System.out.println("new stage2");
-
-        arg0.setScene(new Scene(root));
-        arg0.setTitle("Image Window");
-        arg0.show();
-
+    public ImageWindowController getController() {
+        return this.imageWindowController;
     }
 }

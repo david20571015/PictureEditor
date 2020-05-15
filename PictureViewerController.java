@@ -29,14 +29,13 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
-
 import javafx.stage.DirectoryChooser;
-import javafx.stage.Stage;
 
 public class PictureViewerController {
     private File currentFolderPath;
     private File currentShowFolderPath;
-    private String defaultOpenFolderPath = "C:";// System.getProperty("user.home") + "/Desktop"
+    private String defaultOpenFolderPath = "D:";// System.getProperty("user.home") + "/Desktop"
+
     ImageWindow imageWindow = null;
 
     @FXML
@@ -108,14 +107,9 @@ public class PictureViewerController {
                             if (e.getClickCount() == 2) {
                                 if (imageWindow == null) {
                                     imageWindow = new ImageWindow();
-                                    try {
-                                        imageWindow.start(new Stage());
-                                        // System.out.println("new stage");
-                                        // imageWindow.imageWindowController.addImage(image);
-                                    } catch (Exception exc) {
-                                    }
                                 }
-                                // show a new window that can edit the image
+                                imageWindow.show();
+                                imageWindow.getController().addImage(image);
                             }
                     }
                 });
