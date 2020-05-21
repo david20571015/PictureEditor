@@ -1,3 +1,5 @@
+package src.resource;
+
 import java.io.File;
 
 import javafx.fxml.FXML;
@@ -11,7 +13,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.image.Image;
 
 public class ImageWindowController {
 
@@ -72,8 +73,8 @@ public class ImageWindowController {
         });
 
         imageView.setOnMouseDragged(e -> {
-            // imageView.setX(e.getX());
-            // imageView.setY(e.getY());
+            imageView.setTranslateX(imageView.getTranslateX() + e.getX());
+            imageView.setTranslateY(imageView.getTranslateY() + e.getY());
             System.out.println("e.getX() x:" + (int) e.getX() + " y:" + (int) e.getY() + " imageView.getLayoutX() x:"
                     + imageView.getLayoutX() + " y:" + imageView.getLayoutY() + " imageView.getX() x:"
                     + imageView.getX() + " y:" + imageView.getY() + " imageView.getTranslateX() x:"
