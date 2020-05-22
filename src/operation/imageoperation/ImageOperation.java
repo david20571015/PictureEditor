@@ -3,10 +3,10 @@ package src.operation.imageoperation;
 import src.operation.Operation;
 
 import javafx.scene.image.Image;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
-import javafx.scene.image.PixelWriter;
-import javafx.scene.image.PixelReader;
 
 public class ImageOperation implements Operation {
     protected Image conv2d(Image inputImage, double[][] mask) {
