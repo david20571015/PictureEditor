@@ -1,7 +1,6 @@
 package src.operation.imageoperation;
 
 import src.operation.Operation;
-
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
@@ -9,50 +8,56 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 
 public class ImageOperation implements Operation {
-    protected Image conv2d(Image inputImage, double[][] mask) {
+    static protected Image conv2d(Image inputImage, double[][] mask) {
         WritableImage output = new WritableImage(inputImage.getPixelReader(), (int) inputImage.getWidth(),
                 (int) inputImage.getHeight());
 
-        int paddingNum = (mask.length - 1) / 2;
-        Color[][] inputColors = imageToMatrix(inputImage, Color.WHITE, paddingNum);
+        int paddingSize = (mask.length - 1) / 2;
+        Color[][] inputColors = imageToMatrix(inputImage, Color.WHITE, paddingSize);
 
         int width = (int) inputImage.getWidth();
         int height = (int) inputImage.getHeight();
         PixelWriter pw = output.getPixelWriter();
 
-        for (int j = paddingNum; j < height + paddingNum; j++)
-            for (int i = paddingNum; i < width + paddingNum; i++) {
+        for (int j = paddingSize; j < height + paddingSize; j++)
+            for (int i = paddingSize; i < width + paddingSize; i++) {
                 int r = 0, g = 0, b = 0;
+                // System.out.println(inputColors[i][j].getRed() + " " +
+                // inputColors[i][j].getGreen() + " "
+                // + inputColors[i][j].getBlue());
 
-                for (int m = -paddingNum; m < paddingNum + 1; m++)
-                    for (int n = -paddingNum; n < paddingNum + 1; n++) {
-                        r += inputColors[i + m][j + n].getRed();
-                        g += inputColors[i + m][j + n].getGreen();
-                        b += inputColors[i + m][j + n].getBlue();
+                for (int m = -paddingSize; m < paddingSize + 1; m++)
+                    for (int n = -paddingSize; n < paddingSize + 1; n++) {
+                        r += inputColors[i + m][j + n].getRed() * 256 * mask[paddingSize + m][paddingSize + n];
+                        g += inputColors[i + m][j + n].getGreen() * 256 * mask[paddingSize + m][paddingSize + n];
+                        b += inputColors[i + m][j + n].getBlue() * 256 * mask[paddingSize + m][paddingSize + n];
                     }
-                pw.setColor(i - paddingNum, j - paddingNum, new Color(r, g, b, 1));
+                // System.out.println((i - paddingSize) + " " + (j - paddingSize));
+                pw.setColor(i - paddingSize, j - paddingSize, Color.rgb(r, g, b));
             }
 
         return output;
     }
 
-    private Color[][] imageToMatrix(Image inputImage, Color padding, int paddingNum) {
+    static private Color[][] imageToMatrix(Image inputImage, Color padding, int paddingSize) {
         int width = (int) inputImage.getWidth();
         int height = (int) inputImage.getHeight();
         PixelReader pr = inputImage.getPixelReader();
 
-        Color[][] colorss = new Color[width + paddingNum * 2][];
-        for (Color[] colors : colorss)
-            colors = new Color[height + paddingNum * 2];
+        Color[][] colorss = new Color[width + paddingSize * 2][];
+        for (int i = 0; i < colorss.length; i++)
+            colorss[i] = new Color[height + paddingSize * 2];
 
-        for (int j = 0; j < height + paddingNum * 2; j++)
-            for (int i = 0; i < width + paddingNum * 2; i++) {
-                if (i < paddingNum || i >= height + paddingNum || j < paddingNum || j >= width + paddingNum)
+        for (int j = 0; j < height + paddingSize * 2; j++)
+            for (int i = 0; i < width + paddingSize * 2; i++) {
+                if (i < paddingSize || i >= width + paddingSize || j < paddingSize || j >= height + paddingSize)
                     colorss[i][j] = padding;
-                else
-                    colorss[i][j] = pr.getColor(i - paddingNum, j - paddingNum);
+                else {
+                    // System.out.println((i - paddingSize) + " " + (j - paddingSize));
+                    colorss[i][j] = pr.getColor(i - paddingSize, j - paddingSize);
+                }
             }
-
+        System.out.println("complete imageToMatrix");
         return colorss;
     }
 }

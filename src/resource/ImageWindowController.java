@@ -10,10 +10,12 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import src.operation.imageoperation.Filter;
 import javafx.event.ActionEvent;
 
 public class ImageWindowController {
@@ -96,7 +98,7 @@ public class ImageWindowController {
         ScrollPane scrollPane = new ScrollPane(imageView);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
-        Tab tab = new Tab(file.getName(), new VBox(scrollPane));
+        Tab tab = new Tab(file.getName(), scrollPane);
 
         tab.setOnSelectionChanged(e -> {
             this.sizeLabel.setText(
@@ -108,7 +110,10 @@ public class ImageWindowController {
 
     @FXML
     void smoothFilterOnAction(ActionEvent event) {
-
+        Tab currentTab = imageTabPane.getSelectionModel().getSelectedItem();
+        ImageView currentImageView = (ImageView) ((ScrollPane) currentTab.getContent()).getContent();
+        currentImageView.setImage(Filter.computeFilter(currentImageView.getImage(), Filter.SMOOTH_FILTER));
+        // System.out.println(currentImageView.getImage().getHeight());
     }
 
     public void closeStage() {
