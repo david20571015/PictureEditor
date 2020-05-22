@@ -3,6 +3,7 @@ package src.resource;
 import java.io.File;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
@@ -13,6 +14,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.event.ActionEvent;
 
 public class ImageWindowController {
 
@@ -24,6 +26,9 @@ public class ImageWindowController {
 
     @FXML
     private TabPane imageTabPane;
+
+    @FXML
+    private Button smoothFilter;
 
     @FXML
     private Label sizeLabel;
@@ -66,19 +71,20 @@ public class ImageWindowController {
             int yPos = (int) (e.getY() / imageView.zoomFactor);
             this.positionLabel.setText("(" + xPos + ", " + yPos + ") ");
 
-            Color color = imageView.getImage().getPixelReader().getColor(xPos, yPos);
+            Color color = imageView.getImage().getPixelReader().getColor((int) e.getX(), (int) e.getY());
             this.colorLabel.setText("(" + (int) (color.getRed() * 256) + ", " + (int) (color.getGreen() * 256) + ", "
                     + (int) (color.getBlue() * 256) + ") ");
             this.colorBlock.setFill(color);
         });
 
+        imageView.setOnMousePressed(e -> {
+            imageView.mouseX = e.getX();
+            imageView.mouseY = e.getY();
+        });
+
         imageView.setOnMouseDragged(e -> {
-            imageView.setTranslateX(imageView.getTranslateX() + e.getX());
-            imageView.setTranslateY(imageView.getTranslateY() + e.getY());
-            System.out.println("e.getX() x:" + (int) e.getX() + " y:" + (int) e.getY() + " imageView.getLayoutX() x:"
-                    + imageView.getLayoutX() + " y:" + imageView.getLayoutY() + " imageView.getX() x:"
-                    + imageView.getX() + " y:" + imageView.getY() + " imageView.getTranslateX() x:"
-                    + imageView.getTranslateX() + " y:" + imageView.getTranslateY());
+            imageView.setTranslateX(imageView.getTranslateX() + e.getX() - imageView.mouseX);
+            imageView.setTranslateY(imageView.getTranslateY() + e.getY() - imageView.mouseY);
         });
 
         imageView.setOnMouseExited(e -> {
@@ -100,6 +106,11 @@ public class ImageWindowController {
         this.imageTabPane.getTabs().add(tab);
     }
 
+    @FXML
+    void smoothFilterOnAction(ActionEvent event) {
+
+    }
+
     public void closeStage() {
         this.imageTabPane.getTabs().clear();
     }
@@ -108,6 +119,7 @@ public class ImageWindowController {
 class Canvas extends ImageView {
     static final double ZOOM_RATE = 0.01;
 
+    public double mouseX, mouseY;
     public double zoomFactor = 1.0;
 
     public Canvas(String filePath) {

@@ -8,10 +8,8 @@ import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 
-public abstract class ImageOperation implements Operation {
-    public abstract WritableImage execute(Image img);
-
-    private Image conv2d(Image inputImage, double[][] mask) {
+public class ImageOperation implements Operation {
+    protected Image conv2d(Image inputImage, double[][] mask) {
         WritableImage output = new WritableImage(inputImage.getPixelReader(), (int) inputImage.getWidth(),
                 (int) inputImage.getHeight());
 
@@ -20,7 +18,6 @@ public abstract class ImageOperation implements Operation {
 
         int width = (int) inputImage.getWidth();
         int height = (int) inputImage.getHeight();
-        PixelReader pr = inputImage.getPixelReader();
         PixelWriter pw = output.getPixelWriter();
 
         for (int j = paddingNum; j < height + paddingNum; j++)
