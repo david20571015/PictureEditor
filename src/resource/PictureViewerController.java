@@ -38,7 +38,7 @@ import javafx.stage.DirectoryChooser;
 public class PictureViewerController {
     private File currentFolderPath;
     private File currentShowFolderPath;
-    private String defaultOpenFolderPath = "D:";// System.getProperty("user.home") + "/Desktop"
+    private String defaultOpenFolderPath = "D:/";// System.getProperty("user.home") + "/Desktop"
 
     ImageWindow imageWindow = null;
 
