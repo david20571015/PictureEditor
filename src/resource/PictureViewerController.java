@@ -40,7 +40,7 @@ public class PictureViewerController {
     private File currentShowFolderPath;
     private String defaultOpenFolderPath = "C:/";// System.getProperty("user.home") + "/Desktop"
 
-    ImageWindow imageWindow = null;
+    private ImageWindow imageWindow = null;
 
     @FXML private MenuItem openMenuItem;
     @FXML private TitledPane folderTitledPane;
