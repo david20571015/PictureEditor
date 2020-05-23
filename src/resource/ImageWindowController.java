@@ -18,50 +18,21 @@ import javafx.event.ActionEvent;
 
 public class ImageWindowController {
 
-    @FXML
-    private MenuItem openMenuItem;
-
-    @FXML
-    private MenuItem saveMenuItem;
-
-    @FXML
-    private TabPane imageTabPane;
-
-    @FXML
-    private Button meanBlur;
-
-    @FXML
-    private Button gaussianBlur;
-
-    @FXML
-    private Button sharpen;
-
-    @FXML
-    private Button relief;
-
-    @FXML
-    private Button unsharpMasking;
-
-    @FXML
-    private Label sizeLabel;
-
-    @FXML
-    private Label zoomLabel;
-
-    @FXML
-    private Label positionLabel;
-
-    @FXML
-    private Label colorLabel;
-
-    @FXML
-    private Rectangle colorBlock;
-
-    @FXML
-    private Label rightStatusLabel;
-
-    @FXML
-    private ProgressBar progressBar;
+    @FXML private MenuItem openMenuItem;
+    @FXML private MenuItem saveMenuItem;
+    @FXML private TabPane imageTabPane;
+    @FXML private Button meanBlur;
+    @FXML private Button gaussianBlur;
+    @FXML private Button sharpen;
+    @FXML private Button relief;
+    @FXML private Button unsharpMasking;
+    @FXML private Label sizeLabel;
+    @FXML private Label zoomLabel;
+    @FXML private Label positionLabel;
+    @FXML private Label colorLabel;
+    @FXML private Rectangle colorBlock;
+    @FXML private Label rightStatusLabel;
+    @FXML private ProgressBar progressBar;
 
     public void addImage(File file) {
         Canvas imageView = new Canvas("file:" + file.getAbsolutePath());
