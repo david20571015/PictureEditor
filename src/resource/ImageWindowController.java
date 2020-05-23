@@ -10,9 +10,7 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import src.operation.imageoperation.Filter;
@@ -30,7 +28,19 @@ public class ImageWindowController {
     private TabPane imageTabPane;
 
     @FXML
-    private Button smoothFilter;
+    private Button meanBlur;
+
+    @FXML
+    private Button gaussianBlur;
+
+    @FXML
+    private Button sharpen;
+
+    @FXML
+    private Button relief;
+
+    @FXML
+    private Button unsharpMasking;
 
     @FXML
     private Label sizeLabel;
@@ -62,16 +72,13 @@ public class ImageWindowController {
             int deltaY = (int) e.getDeltaY();
             imageView.zoomFactor += deltaY * Canvas.ZOOM_RATE;
             imageView.zoomFactor = Math.max(0.01, Math.min(20.0, imageView.zoomFactor));
-            // System.out.println(deltaY + " " + imageView.zoomFactor);
             imageView.setScaleX(imageView.zoomFactor);
             imageView.setScaleY(imageView.zoomFactor);
-            this.zoomLabel.setText(String.valueOf((int) (imageView.zoomFactor * 100)) + "% ");
+            this.zoomLabel.setText(String.valueOf((int) (imageView.zoomFactor * 100.)) + "% ");
         });
 
         imageView.setOnMouseMoved(e -> {
-            int xPos = (int) (e.getX() / imageView.zoomFactor);
-            int yPos = (int) (e.getY() / imageView.zoomFactor);
-            this.positionLabel.setText("(" + xPos + ", " + yPos + ") ");
+            this.positionLabel.setText("(" + (int) e.getX() + ", " + (int) e.getY() + ") ");
 
             Color color = imageView.getImage().getPixelReader().getColor((int) e.getX(), (int) e.getY());
             this.colorLabel.setText("(" + (int) (color.getRed() * 256) + ", " + (int) (color.getGreen() * 256) + ", "
@@ -109,11 +116,38 @@ public class ImageWindowController {
     }
 
     @FXML
-    void smoothFilterOnAction(ActionEvent event) {
+    void meanBlurOnAction(ActionEvent event) {
         Tab currentTab = imageTabPane.getSelectionModel().getSelectedItem();
         ImageView currentImageView = (ImageView) ((ScrollPane) currentTab.getContent()).getContent();
-        currentImageView.setImage(Filter.computeFilter(currentImageView.getImage(), Filter.SMOOTH_FILTER));
-        // System.out.println(currentImageView.getImage().getHeight());
+        currentImageView.setImage(Filter.computeFilter(currentImageView.getImage(), Filter.MEAN_BLUR));
+    }
+
+    @FXML
+    void gaussianBlurOnAction(ActionEvent event) {
+        Tab currentTab = imageTabPane.getSelectionModel().getSelectedItem();
+        ImageView currentImageView = (ImageView) ((ScrollPane) currentTab.getContent()).getContent();
+        currentImageView.setImage(Filter.computeFilter(currentImageView.getImage(), Filter.GAUSSIAN_BLUR));
+    }
+
+    @FXML
+    void reliefOnAction(ActionEvent event) {
+        Tab currentTab = imageTabPane.getSelectionModel().getSelectedItem();
+        ImageView currentImageView = (ImageView) ((ScrollPane) currentTab.getContent()).getContent();
+        currentImageView.setImage(Filter.computeFilter(currentImageView.getImage(), Filter.RELIEF));
+    }
+
+    @FXML
+    void sharpenOnAction(ActionEvent event) {
+        Tab currentTab = imageTabPane.getSelectionModel().getSelectedItem();
+        ImageView currentImageView = (ImageView) ((ScrollPane) currentTab.getContent()).getContent();
+        currentImageView.setImage(Filter.computeFilter(currentImageView.getImage(), Filter.SHARPEN));
+    }
+
+    @FXML
+    void unsharpMaskingOnAction(ActionEvent event) {
+        Tab currentTab = imageTabPane.getSelectionModel().getSelectedItem();
+        ImageView currentImageView = (ImageView) ((ScrollPane) currentTab.getContent()).getContent();
+        currentImageView.setImage(Filter.computeFilter(currentImageView.getImage(), Filter.UNSHAPR_MASKING));
     }
 
     public void closeStage() {

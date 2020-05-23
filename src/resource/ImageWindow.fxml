@@ -47,9 +47,14 @@
             <TitledPane animated="false" maxHeight="1.7976931348623157E308" text="Tool Box 1">
               <content>
                 <AnchorPane maxHeight="1.7976931348623157E308">
-                           <children>
-                              <Button fx:id="smoothFilter" layoutX="14.0" layoutY="10.0" mnemonicParsing="false" onAction="#smoothFilterOnAction" text="Button" />
-                           </children></AnchorPane>
+                  <children>
+                    <Button fx:id="meanBlur" layoutY="3.0" mnemonicParsing="false" onAction="#meanBlurOnAction" text="Mean Blur" />
+                    <Button fx:id="gaussianBlur" layoutY="34.0" mnemonicParsing="false" onAction="#gaussianBlurOnAction" text="Gaussian Blur" />
+                    <Button fx:id="sharpen" layoutY="64.0" mnemonicParsing="false" onAction="#sharpenOnAction" text="Sharpen" />
+                    <Button fx:id="relief" layoutY="96.0" mnemonicParsing="false" onAction="#reliefOnAction" text="Relief" />
+                              <Button fx:id="unsharpMasking" layoutX="-3.0" layoutY="126.0" mnemonicParsing="false" onAction="#unsharpMaskingOnAction" text="Unsharp Masking" />
+                  </children>
+                </AnchorPane>
               </content>
             </TitledPane>
             <TitledPane animated="false" maxHeight="1.7976931348623157E308" text="Tool Box 2">
@@ -70,7 +75,7 @@
     <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
       <children>
         <Label fx:id="sizeLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Size" />
-        <Label fx:id="zoomLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Zoom" />
+        <Label fx:id="zoomLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="100%" />
         <Label fx:id="positionLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Position" />
         <Rectangle fx:id="colorBlock" fill="WHITE" height="15.0" stroke="BLACK" strokeType="INSIDE" width="15.0" />
         <Label fx:id="colorLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="(r,g,b)" />

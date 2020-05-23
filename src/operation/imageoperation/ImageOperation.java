@@ -21,19 +21,20 @@ public class ImageOperation implements Operation {
 
         for (int j = paddingSize; j < height + paddingSize; j++)
             for (int i = paddingSize; i < width + paddingSize; i++) {
-                int r = 0, g = 0, b = 0;
-                // System.out.println(inputColors[i][j].getRed() + " " +
-                // inputColors[i][j].getGreen() + " "
-                // + inputColors[i][j].getBlue());
+                double r = 0, g = 0, b = 0;
 
                 for (int m = -paddingSize; m < paddingSize + 1; m++)
                     for (int n = -paddingSize; n < paddingSize + 1; n++) {
-                        r += inputColors[i + m][j + n].getRed() * 256 * mask[paddingSize + m][paddingSize + n];
-                        g += inputColors[i + m][j + n].getGreen() * 256 * mask[paddingSize + m][paddingSize + n];
-                        b += inputColors[i + m][j + n].getBlue() * 256 * mask[paddingSize + m][paddingSize + n];
+                        r += inputColors[i + m][j + n].getRed() * mask[paddingSize + m][paddingSize + n];
+                        g += inputColors[i + m][j + n].getGreen() * mask[paddingSize + m][paddingSize + n];
+                        b += inputColors[i + m][j + n].getBlue() * mask[paddingSize + m][paddingSize + n];
                     }
-                // System.out.println((i - paddingSize) + " " + (j - paddingSize));
-                pw.setColor(i - paddingSize, j - paddingSize, Color.rgb(r, g, b));
+
+                r = Math.max(0, Math.min(r, 1.));
+                g = Math.max(0, Math.min(g, 1.));
+                b = Math.max(0, Math.min(b, 1.));
+
+                pw.setColor(i - paddingSize, j - paddingSize, new Color(r, g, b, 1.0));
             }
 
         return output;
@@ -52,12 +53,9 @@ public class ImageOperation implements Operation {
             for (int i = 0; i < width + paddingSize * 2; i++) {
                 if (i < paddingSize || i >= width + paddingSize || j < paddingSize || j >= height + paddingSize)
                     colorss[i][j] = padding;
-                else {
-                    // System.out.println((i - paddingSize) + " " + (j - paddingSize));
+                else
                     colorss[i][j] = pr.getColor(i - paddingSize, j - paddingSize);
-                }
             }
-        System.out.println("complete imageToMatrix");
         return colorss;
     }
 }
