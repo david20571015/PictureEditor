@@ -13,16 +13,13 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.TreeView?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="600.0" prefWidth="900.0" 
-   xmlns="http://javafx.com/javafx/11.0.1" 
-   xmlns:fx="http://javafx.com/fxml/1" fx:controller="src.resource.PictureViewerController">
+<VBox prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="src.resource.PictureViewerController">
    <children>
       <MenuBar VBox.vgrow="NEVER">
          <menus>
@@ -64,7 +61,7 @@
                <tabs>
                   <Tab text="File Name">
                      <content>
-                        <VBox prefHeight="200.0" prefWidth="100.0">
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                            <children>
                               <FlowPane fx:id="folderPathFlowPane" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" VBox.vgrow="NEVER">
                                  <children>
@@ -84,11 +81,6 @@
                                     </FlowPane>
                                  </content>
                               </ScrollPane>
-                              <Pane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                                 <children>
-                                    <ImageView fx:id="imageView" fitHeight="496.0" fitWidth="567.0" onDragDropped="#imageViewDropped" onDragOver="#imageViewDragOver" pickOnBounds="true" preserveRatio="true" />
-                                 </children>
-                              </Pane>
                            </children>
                         </VBox>
                      </content>

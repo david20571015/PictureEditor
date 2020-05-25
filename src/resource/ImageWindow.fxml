@@ -24,7 +24,7 @@
         <Menu mnemonicParsing="false" text="File">
           <items>
             <MenuItem fx:id="openMenuItem" mnemonicParsing="false" text="Open" />
-            <MenuItem fx:id="saveMenuItem" mnemonicParsing="false" text="Save" />
+            <MenuItem fx:id="saveMenuItem" mnemonicParsing="false" onAction="#saveMenuItemOnAction" text="Save" />
           </items>
         </Menu>
         <Menu mnemonicParsing="false" text="Edit">
@@ -44,15 +44,15 @@
         <TabPane fx:id="imageTabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" />
         <VBox prefWidth="466.0" SplitPane.resizableWithParent="false">
           <children>
-            <TitledPane animated="false" maxHeight="1.7976931348623157E308" text="Tool Box 1">
+            <TitledPane animated="false" maxHeight="1.7976931348623157E308" text="Filter">
               <content>
                 <AnchorPane maxHeight="1.7976931348623157E308">
                   <children>
-                    <Button fx:id="meanBlur" layoutY="3.0" mnemonicParsing="false" onAction="#meanBlurOnAction" text="Mean Blur" />
-                    <Button fx:id="gaussianBlur" layoutY="34.0" mnemonicParsing="false" onAction="#gaussianBlurOnAction" text="Gaussian Blur" />
-                    <Button fx:id="sharpen" layoutY="64.0" mnemonicParsing="false" onAction="#sharpenOnAction" text="Sharpen" />
-                    <Button fx:id="relief" layoutY="96.0" mnemonicParsing="false" onAction="#reliefOnAction" text="Relief" />
-                              <Button fx:id="unsharpMasking" layoutX="-3.0" layoutY="126.0" mnemonicParsing="false" onAction="#unsharpMaskingOnAction" text="Unsharp Masking" />
+                    <Button fx:id="meanBlur" layoutY="3.0" mnemonicParsing="false" onAction="#filterButtonOnAction" text="Mean Blur" />
+                    <Button fx:id="gaussianBlur" layoutY="34.0" mnemonicParsing="false" onAction="#filterButtonOnAction" text="Gaussian Blur" />
+                    <Button fx:id="sharpen" layoutY="64.0" mnemonicParsing="false" onAction="#filterButtonOnAction" text="Sharpen" />
+                    <Button fx:id="relief" layoutY="96.0" mnemonicParsing="false" onAction="#filterButtonOnAction" text="Relief" />
+                              <Button fx:id="unsharpMasking" layoutX="-3.0" layoutY="126.0" mnemonicParsing="false" onAction="#filterButtonOnAction" text="Unsharp Masking" />
                   </children>
                 </AnchorPane>
               </content>

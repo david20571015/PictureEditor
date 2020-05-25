@@ -38,18 +38,26 @@ import javafx.stage.DirectoryChooser;
 public class PictureViewerController {
     private File currentFolderPath;
     private File currentShowFolderPath;
-    private String defaultOpenFolderPath = "C:/";// System.getProperty("user.home") + "/Desktop"
+    private String defaultOpenFolderPath = "D:/";// System.getProperty("user.home") + "/Desktop"
 
     private ImageWindow imageWindow = null;
 
-    @FXML private MenuItem openMenuItem;
-    @FXML private TitledPane folderTitledPane;
-    @FXML private ImageView imageView;
-    @FXML private TreeView<File> folderTreeView;
-    @FXML private FlowPane imageFlowPane;
-    @FXML private FlowPane folderPathFlowPane;
-    @FXML private Label rightStatusLabel;
-    @FXML private ProgressBar progressBar;
+    @FXML
+    private MenuItem openMenuItem;
+    @FXML
+    private TitledPane folderTitledPane;
+    @FXML
+    private ImageView imageView;
+    @FXML
+    private TreeView<File> folderTreeView;
+    @FXML
+    private FlowPane imageFlowPane;
+    @FXML
+    private FlowPane folderPathFlowPane;
+    @FXML
+    private Label rightStatusLabel;
+    @FXML
+    private ProgressBar progressBar;
 
     @FXML
     void imageViewDragOver(DragEvent event) {
@@ -101,9 +109,8 @@ public class PictureViewerController {
                     public void handle(MouseEvent e) {
                         if (e.getButton().equals(MouseButton.PRIMARY))
                             if (e.getClickCount() == 2) {
-                                if (imageWindow == null) {
+                                if (imageWindow == null)
                                     imageWindow = new ImageWindow();
-                                }
                                 imageWindow.show();
                                 imageWindow.getController().addImage(image);
                             }
