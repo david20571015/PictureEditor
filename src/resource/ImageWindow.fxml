@@ -11,8 +11,8 @@
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
@@ -64,17 +64,12 @@
                 <AnchorPane maxHeight="1.7976931348623157E308">
                            <children>
                               <ColorPicker fx:id="penColorPicker" layoutY="-1.0" />
-                              <Slider fx:id="penSizeSlider" blockIncrement="1.0" layoutY="34.0" showTickLabels="true" />
-                              <Label fx:id="penSizeLabel" layoutX="147.0" layoutY="36.0" text="Label" />
+                              <Slider fx:id="penSizeSlider" blockIncrement="1.0" layoutY="34.0" minorTickCount="1" showTickLabels="true" snapToTicks="true" value="1.0" />
+                              <TextField fx:id="penSizeTextField" layoutX="144.0" layoutY="32.0" prefHeight="23.0" prefWidth="46.0" />
                            </children></AnchorPane>
               </content>
             </TitledPane>
-            <TitledPane animated="false" maxHeight="1.7976931348623157E308" text="Tool Box 3">
-              <content>
-                <AnchorPane maxHeight="1.7976931348623157E308" />
-              </content>
-            </TitledPane>
-            <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+            <TitledPane animated="false" maxHeight="1.7976931348623157E308" text="Enhancement" />
           </children>
         </VBox>
       </items>

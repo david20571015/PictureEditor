@@ -10,6 +10,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import javafx.fxml.FXML;
+import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
@@ -19,12 +20,17 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.input.InputMethodEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 import javafx.embed.swing.SwingFXUtils;
@@ -57,7 +63,7 @@ public class ImageWindowController {
     @FXML
     private Slider penSizeSlider;
     @FXML
-    private Label penSizeLabel;
+    private TextField penSizeTextField;
     @FXML
     private Label positionLabel;
     @FXML
@@ -71,7 +77,8 @@ public class ImageWindowController {
 
     @FXML
     void initialize() {
-        penSizeLabel.textProperty().bind(penSizeSlider.valueProperty().asString("%.0f"));
+        penSizeTextField.textProperty().bind(penSizeSlider.valueProperty().asString("%.0f"));
+        // penSizeTextField.textProperty().addListener((ob,ov,nv)->{penSizeSlider.setValue(Double.valueOf(nv));});
     }
 
     @FXML
@@ -122,6 +129,7 @@ public class ImageWindowController {
         });
 
         imageView.setOnMouseMoved(e -> {
+            imageView.getScene().setCursor(Cursor.CROSSHAIR);
             this.positionLabel.setText("(" + (int) e.getX() + ", " + (int) e.getY() + ") ");
 
             Color color = imageView.getImage().getPixelReader().getColor((int) e.getX(), (int) e.getY());
@@ -141,9 +149,19 @@ public class ImageWindowController {
 
         imageView.setOnMouseDragged(e -> {
             if (e.getButton().equals(MouseButton.PRIMARY)) {
+                imageView.getScene().setCursor(Cursor.DISAPPEAR);
+                Circle penCircle = new Circle();
+
+                penCircle.radiusProperty().bind(penSizeSlider.valueProperty());
+                penCircle.fillProperty().bind(penColorPicker.valueProperty());
+                penCircle.setStroke(Color.BLACK);
+                penCircle.setCenterX(e.getX());
+                penCircle.setCenterY(e.getY());
+
                 imageView.paint((int) e.getX(), (int) e.getY(), (Color) imageView.getPen().getFill());
             }
             if (e.getButton().equals(MouseButton.SECONDARY)) {
+                imageView.getScene().setCursor(Cursor.MOVE);
                 imageView.setTranslateX(imageView.getTranslateX() + e.getX() - imageView.mouseX);
                 imageView.setTranslateY(imageView.getTranslateY() + e.getY() - imageView.mouseY);
             }
@@ -223,7 +241,7 @@ class Canvas extends ImageView {
                 int paintY = y + j;
 
                 if (0 <= paintX && paintX < getImage().getWidth() && 0 <= paintY && paintY < getImage().getHeight()) {
-                    if (Math.sqrt(i * i + j * j) <= radius)
+                    if (Math.sqrt(i * i + j * j) < radius)
                         pw.setColor(paintX, paintY, color);
                 }
             }
