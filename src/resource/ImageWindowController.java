@@ -21,11 +21,9 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
@@ -59,6 +57,8 @@ public class ImageWindowController {
     @FXML
     private Slider penSizeSlider;
     @FXML
+    private Label penSizeLabel;
+    @FXML
     private Label positionLabel;
     @FXML
     private Label colorLabel;
@@ -68,6 +68,11 @@ public class ImageWindowController {
     private Label rightStatusLabel;
     @FXML
     private ProgressBar progressBar;
+
+    @FXML
+    void initialize() {
+        penSizeLabel.textProperty().bind(penSizeSlider.valueProperty().asString("%.0f"));
+    }
 
     @FXML
     void saveMenuItemOnAction(ActionEvent event) {
@@ -211,7 +216,17 @@ class Canvas extends ImageView {
                 (int) getImage().getHeight());
         PixelWriter pw = writableImage.getPixelWriter();
 
-        pw.setColor(x, y, color);
+        int radius = (int) this.pen.getRadius();
+        for (int i = -radius; i < radius; i++)
+            for (int j = -radius; j < radius; j++) {
+                int paintX = x + i;
+                int paintY = y + j;
+
+                if (0 <= paintX && paintX < getImage().getWidth() && 0 <= paintY && paintY < getImage().getHeight()) {
+                    if (Math.sqrt(i * i + j * j) <= radius)
+                        pw.setColor(paintX, paintY, color);
+                }
+            }
 
         setImage(writableImage);
     }
