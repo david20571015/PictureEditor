@@ -35,6 +35,8 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.DirectoryChooser;
+import javafx.scene.text.Text;
+import javafx.scene.control.Label;
 
 public class PictureViewerController {
     private File currentFolderPath;
@@ -43,22 +45,16 @@ public class PictureViewerController {
 
     private ImageWindow imageWindow = null;
 
+    @FXML private MenuItem openMenuItem;
+    @FXML private TitledPane folderTitledPane;
+    @FXML private ImageView imageView;
+    @FXML private TreeView<File> folderTreeView;
+    @FXML private FlowPane imageFlowPane;
+    @FXML private FlowPane folderPathFlowPane;
+    @FXML private Label rightStatusLabel;
+    @FXML private ProgressBar progressBar;
     @FXML
-    private MenuItem openMenuItem;
-    @FXML
-    private TitledPane folderTitledPane;
-    @FXML
-    private ImageView imageView;
-    @FXML
-    private TreeView<File> folderTreeView;
-    @FXML
-    private FlowPane imageFlowPane;
-    @FXML
-    private FlowPane folderPathFlowPane;
-    @FXML
-    private Label rightStatusLabel;
-    @FXML
-    private ProgressBar progressBar;
+    private Label label1;
 
     @FXML
     void imageViewDragOver(DragEvent event) {
@@ -124,19 +120,17 @@ public class PictureViewerController {
 
             currentShowFolderPath = folderPath.getValue();
 
-            Stack<String> stackofstring = new Stack();
-            String path = currentShowFolderPath.toString();
-            //System.out.println(path);
-            int preindex = path.length();
-            int nextindex = path.lastIndexOf("\\");
-            while(nextindex != -1){
-                stackofstring.push(path.substring(nextindex+1,preindex));
-                //System.out.println(nextindex+" "+preindex+" "+path.substring(nextindex+1,preindex));
-                preindex = nextindex;
-                nextindex = path.lastIndexOf("\\",preindex-1);
-            }
-            stackofstring.push(path.substring(nextindex+1,preindex));
-            //System.out.println(nextindex+" "+preindex+" "+path.substring(nextindex+1,preindex));
+            String []srt = folderPath.getValue().toString().split("\\\\");
+            System.out.println(srt[0]);
+            label1.setText(srt[0]);
+            // for(int i=0;i<srt.length;i++){
+
+            //      System.out.println(i+" "+srt[i]);
+            //     // if(i!=0){
+            //     //     pathtext[i*2-1].setText(">");
+            //     // }
+            //     pathtext[i*2].setText(srt[i]);
+            // }
         }
     }
 }
