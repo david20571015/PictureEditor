@@ -65,7 +65,7 @@
                            <children>
                               <ColorPicker fx:id="penColorPicker" layoutY="-1.0" />
                               <Slider fx:id="penSizeSlider" blockIncrement="1.0" layoutY="34.0" minorTickCount="1" showTickLabels="true" snapToTicks="true" value="1.0" />
-                              <TextField fx:id="penSizeTextField" layoutX="144.0" layoutY="32.0" prefHeight="23.0" prefWidth="46.0" />
+                              <TextField fx:id="penSizeTextField" layoutX="144.0" layoutY="32.0" prefHeight="23.0" prefWidth="46.0" text="1" />
                            </children></AnchorPane>
               </content>
             </TitledPane>

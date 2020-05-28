@@ -25,14 +25,12 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
-import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.input.InputMethodEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
+import javafx.util.StringConverter;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 
@@ -77,8 +75,17 @@ public class ImageWindowController {
 
     @FXML
     void initialize() {
-        penSizeTextField.textProperty().bind(penSizeSlider.valueProperty().asString("%.0f"));
-        // penSizeTextField.textProperty().addListener((ob,ov,nv)->{penSizeSlider.setValue(Double.valueOf(nv));});
+        penSizeTextField.textProperty().bindBidirectional(penSizeSlider.valueProperty(), new StringConverter<Number>() {
+            @Override
+            public String toString(Number t) {
+                return String.format("%.0f",t);
+            }
+
+            @Override
+            public Number fromString(String s) {
+                return Integer.valueOf(s);
+            }
+        });
     }
 
     @FXML
