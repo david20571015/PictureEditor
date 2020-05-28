@@ -40,7 +40,7 @@ public class PictureViewerController {
     private File currentShowFolderPath;
     private String defaultOpenFolderPath = "D:/";// System.getProperty("user.home") + "/Desktop"
 
-    ImageWindow imageWindow = null;
+    private ImageWindow imageWindow = null;
 
     @FXML
     private MenuItem openMenuItem;
@@ -109,9 +109,8 @@ public class PictureViewerController {
                     public void handle(MouseEvent e) {
                         if (e.getButton().equals(MouseButton.PRIMARY))
                             if (e.getClickCount() == 2) {
-                                if (imageWindow == null) {
+                                if (imageWindow == null)
                                     imageWindow = new ImageWindow();
-                                }
                                 imageWindow.show();
                                 imageWindow.getController().addImage(image);
                             }
