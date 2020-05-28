@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.List;
+import java.util.Stack;
 
 import javafx.fxml.FXML;
 import javafx.collections.FXCollections;
@@ -122,6 +123,20 @@ public class PictureViewerController {
             rightStatusLabel.setText("Complete");
 
             currentShowFolderPath = folderPath.getValue();
+
+            Stack<String> stackofstring = new Stack();
+            String path = currentShowFolderPath.toString();
+            //System.out.println(path);
+            int preindex = path.length();
+            int nextindex = path.lastIndexOf("\\");
+            while(nextindex != -1){
+                stackofstring.push(path.substring(nextindex+1,preindex));
+                //System.out.println(nextindex+" "+preindex+" "+path.substring(nextindex+1,preindex));
+                preindex = nextindex;
+                nextindex = path.lastIndexOf("\\",preindex-1);
+            }
+            stackofstring.push(path.substring(nextindex+1,preindex));
+            //System.out.println(nextindex+" "+preindex+" "+path.substring(nextindex+1,preindex));
         }
     }
 }
