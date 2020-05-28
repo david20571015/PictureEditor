@@ -2,11 +2,13 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ColorPicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TitledPane?>
@@ -57,9 +59,13 @@
                 </AnchorPane>
               </content>
             </TitledPane>
-            <TitledPane animated="false" maxHeight="1.7976931348623157E308" text="Tool Box 2">
+            <TitledPane animated="false" maxHeight="1.7976931348623157E308" text="Pen">
               <content>
-                <AnchorPane maxHeight="1.7976931348623157E308" />
+                <AnchorPane maxHeight="1.7976931348623157E308">
+                           <children>
+                              <ColorPicker fx:id="penColorPicker" layoutY="-1.0" />
+                              <Slider fx:id="penSizeSlider" blockIncrement="1.0" layoutY="34.0" showTickLabels="true" />
+                           </children></AnchorPane>
               </content>
             </TitledPane>
             <TitledPane animated="false" maxHeight="1.7976931348623157E308" text="Tool Box 3">

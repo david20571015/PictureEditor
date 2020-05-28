@@ -1,16 +1,27 @@
 package src.resource;
 
+import src.operation.imageoperation.Filter;
+import src.operation.imageoperation.Pen;
+
+import java.awt.image.BufferedImage;
 import java.io.File;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Slider;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import src.operation.imageoperation.Filter;
@@ -49,6 +60,10 @@ public class ImageWindowController {
     private Label zoomLabel;
 
     @FXML
+    private ColorPicker penColorPicker;
+    @FXML
+    private Slider penSizeSlider;
+    @FXML
     private Label positionLabel;
 
     @FXML
@@ -68,6 +83,10 @@ public class ImageWindowController {
         imageView.setSmooth(true);
         imageView.setPreserveRatio(true);
 
+        imageView.getPen().fillProperty().bind(penColorPicker.valueProperty());
+        imageView.getPen().radiusProperty().bind(penSizeSlider.valueProperty());
+        imageView.getPen().setVisible(true);
+
         imageView.setOnScroll(e -> {
             int deltaY = (int) e.getDeltaY();
             imageView.zoomFactor += deltaY * Canvas.ZOOM_RATE;
@@ -84,16 +103,25 @@ public class ImageWindowController {
             this.colorLabel.setText("(" + (int) (color.getRed() * 256) + ", " + (int) (color.getGreen() * 256) + ", "
                     + (int) (color.getBlue() * 256) + ") ");
             this.colorBlock.setFill(color);
+
+            imageView.getPen().setPosition(e.getX(), e.getY());
         });
 
         imageView.setOnMousePressed(e -> {
             imageView.mouseX = e.getX();
             imageView.mouseY = e.getY();
+            imageView.penX = (int) e.getX();
+            imageView.penY = (int) e.getY();
         });
 
         imageView.setOnMouseDragged(e -> {
-            imageView.setTranslateX(imageView.getTranslateX() + e.getX() - imageView.mouseX);
-            imageView.setTranslateY(imageView.getTranslateY() + e.getY() - imageView.mouseY);
+            if (e.getButton().equals(MouseButton.PRIMARY)) {
+                imageView.paint((int) e.getX(), (int) e.getY(), (Color) imageView.getPen().getFill());
+            }
+            if (e.getButton().equals(MouseButton.SECONDARY)) {
+                imageView.setTranslateX(imageView.getTranslateX() + e.getX() - imageView.mouseX);
+                imageView.setTranslateY(imageView.getTranslateY() + e.getY() - imageView.mouseY);
+            }
         });
 
         imageView.setOnMouseExited(e -> {
@@ -161,7 +189,24 @@ class Canvas extends ImageView {
     public double mouseX, mouseY;
     public double zoomFactor = 1.0;
 
+    private Pen pen = new Pen();
+    public int penX, penY;
+
     public Canvas(String filePath) {
         super(filePath);
+    }
+
+    public Pen getPen() {
+        return this.pen;
+    }
+
+    public void paint(int x, int y, Color color) {
+        WritableImage writableImage = new WritableImage(getImage().getPixelReader(), (int) getImage().getWidth(),
+                (int) getImage().getHeight());
+        PixelWriter pw = writableImage.getPixelWriter();
+
+        pw.setColor(x, y, color);
+
+        setImage(writableImage);
     }
 }
