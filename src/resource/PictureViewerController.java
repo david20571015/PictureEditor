@@ -1,9 +1,17 @@
+package src.resource;
+
+import src.window.ImageWindow;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
+import java.util.Vector;
 
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -30,35 +38,33 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.DirectoryChooser;
+import javafx.scene.text.Text;
+import javafx.scene.control.Label;
 
 public class PictureViewerController {
     private File currentFolderPath;
     private File currentShowFolderPath;
-    private String defaultOpenFolderPath = "D:";// System.getProperty("user.home") + "/Desktop"
+    private String defaultOpenFolderPath = "C:/";// System.getProperty("user.home") + "/Desktop"
+
+    private ImageWindow imageWindow = null;
 
     @FXML
     private MenuItem openMenuItem;
-
     @FXML
     private TitledPane folderTitledPane;
-
     @FXML
     private ImageView imageView;
-
     @FXML
     private TreeView<File> folderTreeView;
-
     @FXML
     private FlowPane imageFlowPane;
-
     @FXML
     private FlowPane folderPathFlowPane;
-
     @FXML
     private Label rightStatusLabel;
-
     @FXML
     private ProgressBar progressBar;
+    private ArrayList<Text> pathtext = new ArrayList<Text>();
 
     @FXML
     void imageViewDragOver(DragEvent event) {
@@ -110,9 +116,10 @@ public class PictureViewerController {
                     public void handle(MouseEvent e) {
                         if (e.getButton().equals(MouseButton.PRIMARY))
                             if (e.getClickCount() == 2) {
-                                ImageWindow i = new ImageWindow();
-                                i.show();
-                                // show a new window that can edit the image
+                                if (imageWindow == null)
+                                    imageWindow = new ImageWindow();
+                                imageWindow.show();
+                                imageWindow.getController().addImage(image);
                             }
                     }
                 });
@@ -122,6 +129,43 @@ public class PictureViewerController {
             rightStatusLabel.setText("Complete");
 
             currentShowFolderPath = folderPath.getValue();
+
+            folderPathFlowPane.getChildren().clear();
+            System.out.println(folderPath.getValue().toString());
+            pathtext.clear();
+            String[] srt = folderPath.getValue().toString().split("\\\\");
+            for (int i = 0; i < srt.length; i++) {
+                if (i != 0) {
+                    pathtext.add(new Text(">"));
+                    FlowPane.setMargin(pathtext.get(pathtext.size() - 1), new Insets(0, 5, 0, 0));
+                    folderPathFlowPane.getChildren().add(pathtext.get(pathtext.size() - 1));
+                }
+                pathtext.add(new Text(srt[i]));
+                FlowPane.setMargin(pathtext.get(pathtext.size() - 1), new Insets(0, 5, 0, 0));
+                folderPathFlowPane.getChildren().add(pathtext.get(pathtext.size() - 1));
+                pathtext.get(pathtext.size() - 1).setOnMouseClicked(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent e) {
+                        if (e.getButton().equals(MouseButton.PRIMARY)) {
+                            if (e.getClickCount() == 2) {
+                                String path = new String();
+                                int j = 0;
+                                while (!e.getSource().equals(pathtext.get(2 * j))) {
+                                    path += pathtext.get(2 * j).getText() + "\\";
+                                    j++;
+                                }
+                                path += pathtext.get(2 * j).getText();
+                                currentFolderPath = new File(path);
+                                folderTreeView = new TreeView<File>(new FolderItem(currentFolderPath));
+                                folderTreeView.setShowRoot(false);
+                                folderTitledPane.setContent(folderTreeView);
+                                folderTreeView.addEventHandler(MouseEvent.MOUSE_CLICKED, ev -> showImagesInFolder(
+                                        folderTreeView.getSelectionModel().getSelectedItems().get(0)));
+                            }
+                        }
+                    }
+                });
+            }
         }
     }
 }
