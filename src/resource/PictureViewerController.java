@@ -44,20 +44,28 @@ import javafx.scene.control.Label;
 public class PictureViewerController {
     private File currentFolderPath;
     private File currentShowFolderPath;
-    private String defaultOpenFolderPath = System.getProperty("user.home") + "/Desktop";// System.getProperty("user.home") + "/Desktop"
+    private String defaultOpenFolderPath = System.getProperty("user.home") + "/Desktop";// System.getProperty("user.home")
+                                                                                        // + "/Desktop"
 
     private ImageWindow imageWindow = null;
     private ArrayList<Text> pathtext = new ArrayList<Text>();
 
-    @FXML private MenuItem openMenuItem;
-    @FXML private TitledPane folderTitledPane;
-    @FXML private ImageView imageView;
-    @FXML private TreeView<File> folderTreeView;
-    @FXML private FlowPane imageFlowPane;
-    @FXML private FlowPane folderPathFlowPane;
-    @FXML private Label rightStatusLabel;
-    @FXML private ProgressBar progressBar;
-
+    @FXML
+    private MenuItem openMenuItem;
+    @FXML
+    private TitledPane folderTitledPane;
+    @FXML
+    private ImageView imageView;
+    @FXML
+    private TreeView<File> folderTreeView;
+    @FXML
+    private FlowPane imageFlowPane;
+    @FXML
+    private FlowPane folderPathFlowPane;
+    @FXML
+    private Label rightStatusLabel;
+    @FXML
+    private ProgressBar progressBar;
 
     @FXML
     void imageViewDragOver(DragEvent event) {
@@ -142,21 +150,44 @@ public class PictureViewerController {
                             if (e.getClickCount() == 2) {
                                 String path = new String();
                                 int j = 0;
-                                while (!e.getSource().equals(pathtext.get(2 * j))) {
+                                while (!e.getSource().equals(pathtext.get(j))) {
                                     path += pathtext.get(2 * j).getText() + "\\";
-                                    j++;
+                                    j += 2;
                                 }
-                                path += pathtext.get(2*j).getText();
+                                path += pathtext.get(j).getText();
                                 folderTreeView = new TreeView<File>(new FolderItem(new File(path)));
                                 folderTreeView.setShowRoot(false);
-                                folderTreeView.addEventHandler(MouseEvent.MOUSE_CLICKED,
-                                    ev -> showImagesInFolder(folderTreeView.getSelectionModel().getSelectedItems().get(0)));
+                                folderTreeView.addEventHandler(MouseEvent.MOUSE_CLICKED, ev -> showImagesInFolder(
+                                        folderTreeView.getSelectionModel().getSelectedItems().get(0)));
                                 folderTitledPane.setContent(folderTreeView);
-                                j = 2*j+1;
-                                while(j!=folderPathFlowPane.getChildren().size()){
+                                j++;
+                                while (j != folderPathFlowPane.getChildren().size()) {
                                     folderPathFlowPane.getChildren().remove(j);
                                     pathtext.remove(j);
                                 }
+
+                                File[] images = new File(path).listFiles(File::isFile);
+                                imageFlowPane.getChildren().clear();
+
+                                double fileCounter = 1;
+
+                                for (File image : images) {
+                                    ImageFilePane img = new ImageFilePane(image);
+                                    img.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                                        @Override
+                                        public void handle(MouseEvent e) {
+                                            if (e.getButton().equals(MouseButton.PRIMARY))
+                                                if (e.getClickCount() == 2) {
+                                                    if (imageWindow == null)
+                                                        imageWindow = new ImageWindow();
+                                                    imageWindow.show();
+                                                    imageWindow.getController().addImage(image);
+                                                }
+                                        }
+                                    });
+                                    imageFlowPane.getChildren().add(img);
+                                }
+
                             }
                         }
                     }
