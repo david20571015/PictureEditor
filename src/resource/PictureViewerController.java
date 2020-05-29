@@ -48,14 +48,22 @@ public class PictureViewerController {
 
     private ImageWindow imageWindow = null;
 
-    @FXML private MenuItem openMenuItem;
-    @FXML private TitledPane folderTitledPane;
-    @FXML private ImageView imageView;
-    @FXML private TreeView<File> folderTreeView;
-    @FXML private FlowPane imageFlowPane;
-    @FXML private FlowPane folderPathFlowPane;
-    @FXML private Label rightStatusLabel;
-    @FXML private ProgressBar progressBar;
+    @FXML
+    private MenuItem openMenuItem;
+    @FXML
+    private TitledPane folderTitledPane;
+    @FXML
+    private ImageView imageView;
+    @FXML
+    private TreeView<File> folderTreeView;
+    @FXML
+    private FlowPane imageFlowPane;
+    @FXML
+    private FlowPane folderPathFlowPane;
+    @FXML
+    private Label rightStatusLabel;
+    @FXML
+    private ProgressBar progressBar;
     private ArrayList<Text> pathtext = new ArrayList<Text>();
 
     @FXML
@@ -125,24 +133,24 @@ public class PictureViewerController {
             folderPathFlowPane.getChildren().clear();
             pathtext.clear();
             String[] srt = folderPath.getValue().toString().split("\\\\");
-            for(int i=0;i<srt.length;i++){
-                if(i!=0){
+            for (int i = 0; i < srt.length; i++) {
+                if (i != 0) {
                     pathtext.add(new Text(">"));
-                    FlowPane.setMargin(pathtext.get(pathtext.size()-1), new Insets(0, 5, 0, 0));
-                    folderPathFlowPane.getChildren().add(pathtext.get(pathtext.size()-1));
+                    FlowPane.setMargin(pathtext.get(pathtext.size() - 1), new Insets(0, 5, 0, 0));
+                    folderPathFlowPane.getChildren().add(pathtext.get(pathtext.size() - 1));
                 }
                 pathtext.add(new Text(srt[i]));
-                FlowPane.setMargin(pathtext.get(pathtext.size()-1), new Insets(0, 5, 0, 0));
-                folderPathFlowPane.getChildren().add(pathtext.get(pathtext.size()-1));
-                pathtext.get(pathtext.size()-1).setOnMouseClicked(new EventHandler<MouseEvent>() {
+                FlowPane.setMargin(pathtext.get(pathtext.size() - 1), new Insets(0, 5, 0, 0));
+                folderPathFlowPane.getChildren().add(pathtext.get(pathtext.size() - 1));
+                pathtext.get(pathtext.size() - 1).setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
-                    public void handle(MouseEvent e){
-                        if(e.getButton().equals(MouseButton.PRIMARY)){
-                            if(e.getClickCount() == 2){
+                    public void handle(MouseEvent e) {
+                        if (e.getButton().equals(MouseButton.PRIMARY)) {
+                            if (e.getClickCount() == 2) {
                                 String path = new String();
                                 int j = 0;
-                                while(!e.getSource().equals(pathtext.get(2*j))){
-                                    path += pathtext.get(2*j).getText()+"\\";
+                                while (!e.getSource().equals(pathtext.get(2 * j))) {
+                                    path += pathtext.get(2 * j).getText() + "\\";
                                     j++;
                                 }
                                 path += pathtext.get(2*j).getText();
