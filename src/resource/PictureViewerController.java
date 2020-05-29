@@ -121,8 +121,8 @@ public class PictureViewerController {
             rightStatusLabel.setText("Complete");
 
             currentShowFolderPath = folderPath.getValue();
+
             folderPathFlowPane.getChildren().clear();
-            System.out.println(folderPath.getValue().toString());
             pathtext.clear();
             String[] srt = folderPath.getValue().toString().split("\\\\");
             for(int i=0;i<srt.length;i++){
@@ -146,12 +146,16 @@ public class PictureViewerController {
                                     j++;
                                 }
                                 path += pathtext.get(2*j).getText();
-                                currentFolderPath = new File(path);
-                                folderTreeView = new TreeView<File>(new FolderItem(currentFolderPath));
+                                folderTreeView = new TreeView<File>(new FolderItem(new File(path)));
                                 folderTreeView.setShowRoot(false);
-                                folderTitledPane.setContent(folderTreeView);
                                 folderTreeView.addEventHandler(MouseEvent.MOUSE_CLICKED,
-                                        ev -> showImagesInFolder(folderTreeView.getSelectionModel().getSelectedItems().get(0)));
+                                    ev -> showImagesInFolder(folderTreeView.getSelectionModel().getSelectedItems().get(0)));
+                                folderTitledPane.setContent(folderTreeView);
+                                j = 2*j+1;
+                                while(j!=folderPathFlowPane.getChildren().size()){
+                                    folderPathFlowPane.getChildren().remove(j);
+                                    pathtext.remove(j);
+                                }
                             }
                         }
                     }
