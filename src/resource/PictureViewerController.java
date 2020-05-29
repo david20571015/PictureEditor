@@ -47,24 +47,17 @@ public class PictureViewerController {
     private String defaultOpenFolderPath = System.getProperty("user.home") + "/Desktop";// System.getProperty("user.home") + "/Desktop"
 
     private ImageWindow imageWindow = null;
-
-    @FXML
-    private MenuItem openMenuItem;
-    @FXML
-    private TitledPane folderTitledPane;
-    @FXML
-    private ImageView imageView;
-    @FXML
-    private TreeView<File> folderTreeView;
-    @FXML
-    private FlowPane imageFlowPane;
-    @FXML
-    private FlowPane folderPathFlowPane;
-    @FXML
-    private Label rightStatusLabel;
-    @FXML
-    private ProgressBar progressBar;
     private ArrayList<Text> pathtext = new ArrayList<Text>();
+
+    @FXML private MenuItem openMenuItem;
+    @FXML private TitledPane folderTitledPane;
+    @FXML private ImageView imageView;
+    @FXML private TreeView<File> folderTreeView;
+    @FXML private FlowPane imageFlowPane;
+    @FXML private FlowPane folderPathFlowPane;
+    @FXML private Label rightStatusLabel;
+    @FXML private ProgressBar progressBar;
+
 
     @FXML
     void imageViewDragOver(DragEvent event) {
