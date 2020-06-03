@@ -98,19 +98,82 @@ public class PictureViewerController {
         folderTreeView.addEventHandler(MouseEvent.MOUSE_CLICKED,
                 e -> showImagesInFolder(folderTreeView.getSelectionModel().getSelectedItems().get(0)));
 
+        //folderTreeView.
         folderTitledPane.setContent(folderTreeView);
 
     }
 
     private void showImagesInFolder(TreeItem<File> folderPath) {
         if (!folderPath.getValue().equals(currentShowFolderPath)) {
+
             rightStatusLabel.setText("Loading images");
-            File[] images = folderPath.getValue().listFiles(File::isFile);
-            imageFlowPane.getChildren().clear();
+            addImageIntoFolder(folderPath.getValue());
+            rightStatusLabel.setText("Complete");
 
-            double fileCounter = 1;
+            currentShowFolderPath = folderPath.getValue();
 
-            for (File image : images) {
+            folderPathFlowPane.getChildren().clear();
+            pathtext.clear();
+
+            String[] srt = folderPath.getValue().toString().split("\\\\");
+            for (int i = 0; i < srt.length; i++) {
+                if (i != 0) {
+                    pathtext.add(new Text(">"));
+                    FlowPane.setMargin(pathtext.get(pathtext.size() - 1), new Insets(0, 5, 0, 0));
+                    folderPathFlowPane.getChildren().add(pathtext.get(pathtext.size() - 1));
+                }
+                pathtext.add(new Text(srt[i]));
+                FlowPane.setMargin(pathtext.get(pathtext.size() - 1), new Insets(0, 5, 0, 0));
+                folderPathFlowPane.getChildren().add(pathtext.get(pathtext.size() - 1));
+
+                pathtext.get(pathtext.size() - 1).setOnMouseClicked(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent e) {
+                        if (e.getButton().equals(MouseButton.PRIMARY)) {
+                            if (e.getClickCount() == 2) {
+                                String path = new String();
+                                int j = 0;
+                                while (!e.getSource().equals(pathtext.get(j))) {
+                                    path += pathtext.get(j).getText() + "\\";
+                                    j += 2;
+                                }
+                                path += pathtext.get(j).getText();
+                                j++;
+                                while (j != folderPathFlowPane.getChildren().size()) {
+                                    folderPathFlowPane.getChildren().remove(j);
+                                    pathtext.remove(j);
+                                }
+
+                                folderTreeView = new TreeView<File>(new FolderItem(new File(path)));
+                                folderTreeView.setShowRoot(false);
+                                folderTreeView.addEventHandler(MouseEvent.MOUSE_CLICKED, ev -> showImagesInFolder(
+                                        folderTreeView.getSelectionModel().getSelectedItems().get(0)));
+                                folderTitledPane.setContent(folderTreeView);
+
+                                addImageIntoFolder(new File(path));
+                            }
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    String [] pictureformat = {".bmp",".png",".gif",".jpeg",".jpg"};
+
+    private void addImageIntoFolder(File path){
+        imageFlowPane.getChildren().clear();
+
+        File[] images = path.listFiles(File::isFile);
+        double fileCounter = 1;
+        for (File image : images) {
+            Boolean ispictureformat = false;
+            for(String s : pictureformat){
+                if(image.toString().substring(image.toString().length()-s.length()).equals(s))
+                    ispictureformat = true;
+            }
+
+            if(ispictureformat){
                 ImageFilePane img = new ImageFilePane(image);
                 img.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
@@ -125,74 +188,8 @@ public class PictureViewerController {
                     }
                 });
                 imageFlowPane.getChildren().add(img);
-                progressBar.setProgress(fileCounter++ / images.length);
             }
-            rightStatusLabel.setText("Complete");
-
-            currentShowFolderPath = folderPath.getValue();
-
-            folderPathFlowPane.getChildren().clear();
-            pathtext.clear();
-            String[] srt = folderPath.getValue().toString().split("\\\\");
-            for (int i = 0; i < srt.length; i++) {
-                if (i != 0) {
-                    pathtext.add(new Text(">"));
-                    FlowPane.setMargin(pathtext.get(pathtext.size() - 1), new Insets(0, 5, 0, 0));
-                    folderPathFlowPane.getChildren().add(pathtext.get(pathtext.size() - 1));
-                }
-                pathtext.add(new Text(srt[i]));
-                FlowPane.setMargin(pathtext.get(pathtext.size() - 1), new Insets(0, 5, 0, 0));
-                folderPathFlowPane.getChildren().add(pathtext.get(pathtext.size() - 1));
-                pathtext.get(pathtext.size() - 1).setOnMouseClicked(new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent e) {
-                        if (e.getButton().equals(MouseButton.PRIMARY)) {
-                            if (e.getClickCount() == 2) {
-                                String path = new String();
-                                int j = 0;
-                                while (!e.getSource().equals(pathtext.get(j))) {
-                                    path += pathtext.get(j).getText() + "\\";
-                                    j += 2;
-                                }
-                                path += pathtext.get(j).getText();
-                                folderTreeView = new TreeView<File>(new FolderItem(new File(path)));
-                                folderTreeView.setShowRoot(false);
-                                folderTreeView.addEventHandler(MouseEvent.MOUSE_CLICKED, ev -> showImagesInFolder(
-                                        folderTreeView.getSelectionModel().getSelectedItems().get(0)));
-                                folderTitledPane.setContent(folderTreeView);
-                                j++;
-                                while (j != folderPathFlowPane.getChildren().size()) {
-                                    folderPathFlowPane.getChildren().remove(j);
-                                    pathtext.remove(j);
-                                }
-
-                                File[] images = new File(path).listFiles(File::isFile);
-                                imageFlowPane.getChildren().clear();
-
-                                double fileCounter = 1;
-
-                                for (File image : images) {
-                                    ImageFilePane img = new ImageFilePane(image);
-                                    img.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                                        @Override
-                                        public void handle(MouseEvent e) {
-                                            if (e.getButton().equals(MouseButton.PRIMARY))
-                                                if (e.getClickCount() == 2) {
-                                                    if (imageWindow == null)
-                                                        imageWindow = new ImageWindow();
-                                                    imageWindow.show();
-                                                    imageWindow.getController().addImage(image);
-                                                }
-                                        }
-                                    });
-                                    imageFlowPane.getChildren().add(img);
-                                }
-
-                            }
-                        }
-                    }
-                });
-            }
+            progressBar.setProgress(fileCounter++ / images.length);
         }
     }
 }
