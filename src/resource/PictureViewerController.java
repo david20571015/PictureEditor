@@ -151,7 +151,7 @@ public class PictureViewerController {
                                 String path = new String();
                                 int j = 0;
                                 while (!e.getSource().equals(pathtext.get(j))) {
-                                    path += pathtext.get(2 * j).getText() + "\\";
+                                    path += pathtext.get(j).getText() + "\\";
                                     j += 2;
                                 }
                                 path += pathtext.get(j).getText();
