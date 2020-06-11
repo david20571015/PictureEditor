@@ -7,8 +7,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
-import java.util.Vector;
 
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -39,7 +37,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.DirectoryChooser;
 import javafx.scene.text.Text;
-import javafx.scene.control.Label;
 
 public class PictureViewerController {
     private File currentFolderPath;
@@ -98,7 +95,7 @@ public class PictureViewerController {
         folderTreeView.addEventHandler(MouseEvent.MOUSE_CLICKED,
                 e -> showImagesInFolder(folderTreeView.getSelectionModel().getSelectedItems().get(0)));
 
-        //folderTreeView.
+        // folderTreeView.
         folderTitledPane.setContent(folderTreeView);
 
     }
@@ -159,21 +156,21 @@ public class PictureViewerController {
         }
     }
 
-    String [] pictureformat = {".bmp",".png",".gif",".jpeg",".jpg"};
+    String[] pictureformat = { ".bmp", ".png", ".gif", ".jpeg", ".jpg" };
 
-    private void addImageIntoFolder(File path){
+    private void addImageIntoFolder(File path) {
         imageFlowPane.getChildren().clear();
 
         File[] images = path.listFiles(File::isFile);
         double fileCounter = 1;
         for (File image : images) {
             Boolean ispictureformat = false;
-            for(String s : pictureformat){
-                if(image.toString().substring(image.toString().length()-s.length()).equals(s))
+            for (String s : pictureformat) {
+                if (image.toString().substring(image.toString().length() - s.length()).equals(s))
                     ispictureformat = true;
             }
 
-            if(ispictureformat){
+            if (ispictureformat) {
                 ImageFilePane img = new ImageFilePane(image);
                 img.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override

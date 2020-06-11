@@ -55,6 +55,8 @@
                     <Button fx:id="sharpen" layoutY="64.0" mnemonicParsing="false" onAction="#filterButtonOnAction" text="Sharpen" />
                     <Button fx:id="relief" layoutY="96.0" mnemonicParsing="false" onAction="#filterButtonOnAction" text="Relief" />
                               <Button fx:id="unsharpMasking" layoutX="-3.0" layoutY="126.0" mnemonicParsing="false" onAction="#filterButtonOnAction" text="Unsharp Masking" />
+                              <Button fx:id="negative" layoutX="92.0" layoutY="3.0" mnemonicParsing="false" onAction="#filterButtonOnAction" text="Negative" />
+                              <Button fx:id="grayScale" layoutX="68.0" layoutY="96.0" mnemonicParsing="false" onAction="#filterButtonOnAction" text="Gray Scale" />
                   </children>
                 </AnchorPane>
               </content>
@@ -69,7 +71,17 @@
                            </children></AnchorPane>
               </content>
             </TitledPane>
-            <TitledPane animated="false" maxHeight="1.7976931348623157E308" text="Enhancement" />
+            <TitledPane animated="false" maxHeight="1.7976931348623157E308" text="Enhancement">
+                     <content>
+                        <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                           <children>
+                              <Label layoutX="14.0" layoutY="7.0" text="Saturation" />
+                              <Slider fx:id="saturation" layoutX="14.0" layoutY="31.0" />
+                              <Label layoutX="14.0" layoutY="54.0" text="brightness" />
+                              <Slider fx:id="brightness" layoutX="14.0" layoutY="76.0" />
+                           </children>
+                        </AnchorPane>
+                     </content></TitledPane>
           </children>
         </VBox>
       </items>

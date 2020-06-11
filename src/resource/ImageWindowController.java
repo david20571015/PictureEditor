@@ -53,6 +53,10 @@ public class ImageWindowController {
     @FXML
     private Button unsharpMasking;
     @FXML
+    private Button negative;
+    @FXML
+    private Button grayScale;
+    @FXML
     private Label sizeLabel;
     @FXML
     private Label zoomLabel;
@@ -78,7 +82,7 @@ public class ImageWindowController {
         penSizeTextField.textProperty().bindBidirectional(penSizeSlider.valueProperty(), new StringConverter<Number>() {
             @Override
             public String toString(Number t) {
-                return String.format("%.0f",t);
+                return String.format("%.0f", t);
             }
 
             @Override
@@ -197,21 +201,24 @@ public class ImageWindowController {
     void filterButtonOnAction(ActionEvent event) {
         Tab currentTab = imageTabPane.getSelectionModel().getSelectedItem();
         ImageView currentImageView = (ImageView) ((ScrollPane) currentTab.getContent()).getContent();
-
-        double[][] filter = { { 1 } };
+        Image newImage = null;
 
         if (event.getSource() == meanBlur)
-            filter = Filter.MEAN_BLUR;
+            newImage = Filter.computeFilter(currentImageView.getImage(), Filter.MEAN_BLUR);
         else if (event.getSource() == gaussianBlur)
-            filter = Filter.GAUSSIAN_BLUR;
+            newImage = Filter.computeFilter(currentImageView.getImage(), Filter.GAUSSIAN_BLUR);
         else if (event.getSource() == sharpen)
-            filter = Filter.SHARPEN;
+            newImage = Filter.computeFilter(currentImageView.getImage(), Filter.SHARPEN);
         else if (event.getSource() == relief)
-            filter = Filter.RELIEF;
+            newImage = Filter.computeFilter(currentImageView.getImage(), Filter.RELIEF);
         else if (event.getSource() == unsharpMasking)
-            filter = Filter.UNSHAPR_MASKING;
+            newImage = Filter.computeFilter(currentImageView.getImage(), Filter.UNSHAPR_MASKING);
+        else if (event.getSource() == negative)
+            newImage = Filter.toNegative(currentImageView.getImage());
+        else if (event.getSource() == grayScale)
+            newImage = Filter.toGrayScale(currentImageView.getImage());
 
-        currentImageView.setImage(Filter.computeFilter(currentImageView.getImage(), filter));
+        currentImageView.setImage(newImage);
     }
 
     public void closeStage() {
