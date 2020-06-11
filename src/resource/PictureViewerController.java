@@ -18,6 +18,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TitledPane;
+import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
@@ -36,13 +37,13 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.DirectoryChooser;
+import javafx.util.Callback;
 import javafx.scene.text.Text;
 
 public class PictureViewerController {
     private File currentFolderPath;
     private File currentShowFolderPath;
-    private String defaultOpenFolderPath = System.getProperty("user.home") + "/Desktop";// System.getProperty("user.home")
-                                                                                        // + "/Desktop"
+    private String defaultOpenFolderPath = System.getProperty("user.home") + "/Desktop";
 
     private ImageWindow imageWindow = null;
     private ArrayList<Text> pathtext = new ArrayList<Text>();
@@ -65,20 +66,6 @@ public class PictureViewerController {
     private ProgressBar progressBar;
 
     @FXML
-    void imageViewDragOver(DragEvent event) {
-        if (event.getDragboard().hasFiles()) {
-            event.acceptTransferModes(TransferMode.ANY);
-        }
-    }
-
-    @FXML
-    void imageViewDropped(DragEvent event) throws FileNotFoundException {
-        List<File> file = event.getDragboard().getFiles();
-        Image img = new Image(new FileInputStream(file.get(0)));
-        imageView.setImage(img);
-    }
-
-    @FXML
     void openMenuItemOnAction(final ActionEvent event) {
         final DirectoryChooser directoryChooser = new DirectoryChooser();
         directoryChooser.setTitle("Open Folder");
@@ -92,12 +79,28 @@ public class PictureViewerController {
         folderTreeView = new TreeView<File>(new FolderItem(currentFolderPath));
         folderTreeView.setShowRoot(false);
 
+        folderPathFlowPane.getChildren().clear();
+        pathtext.clear();
+
+        folderTreeView.setCellFactory(new Callback<TreeView<File>, TreeCell<File>>() {
+            public TreeCell<File> call(TreeView<File> tv) {
+                return new TreeCell<File>() {
+                    @Override
+                    protected void updateItem(File item, boolean empty) {
+                        super.updateItem(item, empty);
+
+                        setText((empty || item == null) ? "" : item.getName());
+                    }
+                };
+            }
+        });
+
         folderTreeView.addEventHandler(MouseEvent.MOUSE_CLICKED,
                 e -> showImagesInFolder(folderTreeView.getSelectionModel().getSelectedItems().get(0)));
 
-        // folderTreeView.
         folderTitledPane.setContent(folderTreeView);
-
+        changefolderPathFlowPane(parsedPath);
+        addImageIntoFolder(currentFolderPath);
     }
 
     private void showImagesInFolder(TreeItem<File> folderPath) {
@@ -109,50 +112,9 @@ public class PictureViewerController {
 
             currentShowFolderPath = folderPath.getValue();
 
-            folderPathFlowPane.getChildren().clear();
-            pathtext.clear();
-
             String[] srt = folderPath.getValue().toString().split("\\\\");
-            for (int i = 0; i < srt.length; i++) {
-                if (i != 0) {
-                    pathtext.add(new Text(">"));
-                    FlowPane.setMargin(pathtext.get(pathtext.size() - 1), new Insets(0, 5, 0, 0));
-                    folderPathFlowPane.getChildren().add(pathtext.get(pathtext.size() - 1));
-                }
-                pathtext.add(new Text(srt[i]));
-                FlowPane.setMargin(pathtext.get(pathtext.size() - 1), new Insets(0, 5, 0, 0));
-                folderPathFlowPane.getChildren().add(pathtext.get(pathtext.size() - 1));
 
-                pathtext.get(pathtext.size() - 1).setOnMouseClicked(new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent e) {
-                        if (e.getButton().equals(MouseButton.PRIMARY)) {
-                            if (e.getClickCount() == 2) {
-                                String path = new String();
-                                int j = 0;
-                                while (!e.getSource().equals(pathtext.get(j))) {
-                                    path += pathtext.get(j).getText() + "\\";
-                                    j += 2;
-                                }
-                                path += pathtext.get(j).getText();
-                                j++;
-                                while (j != folderPathFlowPane.getChildren().size()) {
-                                    folderPathFlowPane.getChildren().remove(j);
-                                    pathtext.remove(j);
-                                }
-
-                                folderTreeView = new TreeView<File>(new FolderItem(new File(path)));
-                                folderTreeView.setShowRoot(false);
-                                folderTreeView.addEventHandler(MouseEvent.MOUSE_CLICKED, ev -> showImagesInFolder(
-                                        folderTreeView.getSelectionModel().getSelectedItems().get(0)));
-                                folderTitledPane.setContent(folderTreeView);
-
-                                addImageIntoFolder(new File(path));
-                            }
-                        }
-                    }
-                });
-            }
+            changefolderPathFlowPane(srt);
         }
     }
 
@@ -166,7 +128,7 @@ public class PictureViewerController {
         for (File image : images) {
             Boolean ispictureformat = false;
             for (String s : pictureformat) {
-                if (image.toString().substring(image.toString().length() - s.length()).equals(s))
+                if (image.toString().substring(image.toString().length() - s.length()).toLowerCase().equals(s))
                     ispictureformat = true;
             }
 
@@ -187,6 +149,54 @@ public class PictureViewerController {
                 imageFlowPane.getChildren().add(img);
             }
             progressBar.setProgress(fileCounter++ / images.length);
+        }
+    }
+
+    private void changefolderPathFlowPane(String[] s) {
+        folderPathFlowPane.getChildren().clear();
+        pathtext.clear();
+        for (int i = 0; i < s.length; i++) {
+            if (i != 0) {
+                pathtext.add(new Text(">"));
+                FlowPane.setMargin(pathtext.get(pathtext.size() - 1), new Insets(0, 5, 0, 0));
+                folderPathFlowPane.getChildren().add(pathtext.get(pathtext.size() - 1));
+            }
+            pathtext.add(new Text(s[i]));
+            FlowPane.setMargin(pathtext.get(pathtext.size() - 1), new Insets(0, 5, 0, 0));
+            folderPathFlowPane.getChildren().add(pathtext.get(pathtext.size() - 1));
+
+            pathtext.get(pathtext.size() - 1).setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent e) {
+                    if (e.getButton().equals(MouseButton.PRIMARY)) {
+                        if (e.getClickCount() == 2) {
+                            String path = new String();
+                            int j = 0;
+                            while (!e.getSource().equals(pathtext.get(j))) {
+                                path += pathtext.get(j).getText() + "\\";
+                                j += 2;
+                            }
+                            path += pathtext.get(j).getText();
+                            if (path.equals("D:") || path.equals("C:")) {
+                                path += "\\";
+                            }
+                            folderTitledPane.setText(pathtext.get(j).getText());
+                            j++;
+                            while (j != folderPathFlowPane.getChildren().size()) {
+                                folderPathFlowPane.getChildren().remove(j);
+                                pathtext.remove(j);
+                            }
+                            folderTreeView.setRoot(new FolderItem(new File(path)));
+                            folderTreeView.setShowRoot(false);
+                            folderTreeView.addEventHandler(MouseEvent.MOUSE_CLICKED, ev -> showImagesInFolder(
+                                    folderTreeView.getSelectionModel().getSelectedItems().get(0)));
+                            folderTitledPane.setContent(folderTreeView);
+
+                            addImageIntoFolder(new File(path));
+                        }
+                    }
+                }
+            });
         }
     }
 }
