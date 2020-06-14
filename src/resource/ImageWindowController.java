@@ -69,7 +69,9 @@ public class ImageWindowController {
     @FXML
     private Label positionLabel;
     @FXML
-    private Label colorLabel;
+    private Label colorRGBLabel;
+    @FXML
+    private Label colorHSBLabel;
     @FXML
     private Rectangle colorBlock;
     @FXML
@@ -144,8 +146,11 @@ public class ImageWindowController {
             this.positionLabel.setText("(" + (int) e.getX() + ", " + (int) e.getY() + ") ");
 
             Color color = imageView.getImage().getPixelReader().getColor((int) e.getX(), (int) e.getY());
-            this.colorLabel.setText("(" + (int) (color.getRed() * 256) + ", " + (int) (color.getGreen() * 256) + ", "
+            this.colorRGBLabel.setText("(" + (int) (color.getRed() * 256) + ", " + (int) (color.getGreen() * 256) + ", "
                     + (int) (color.getBlue() * 256) + ") ");
+            this.colorHSBLabel.setText(
+                    "(" + String.format("%.3f", color.getHue()) + ", " + String.format("%.3f", color.getSaturation())
+                            + ", " + String.format("%.3f", color.getBrightness()) + ") ");
             this.colorBlock.setFill(color);
 
             imageView.getPen().setPosition(e.getX(), e.getY());
@@ -180,7 +185,8 @@ public class ImageWindowController {
 
         imageView.setOnMouseExited(e -> {
             this.positionLabel.setText("(-, -)");
-            this.colorLabel.setText("(-, -, -)");
+            this.colorRGBLabel.setText("(-, -, -)");
+            this.colorHSBLabel.setText("(-, -, -)");
             this.colorBlock.setFill(Color.WHITE);
         });
 

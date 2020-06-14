@@ -92,7 +92,8 @@
         <Label fx:id="zoomLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="100%" />
         <Label fx:id="positionLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Position" />
         <Rectangle fx:id="colorBlock" fill="WHITE" height="15.0" stroke="BLACK" strokeType="INSIDE" width="15.0" />
-        <Label fx:id="colorLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="(r,g,b)" />
+        <Label fx:id="colorRGBLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="(r,g,b)" />
+            <Label fx:id="colorHSBLabel" text="(h,s,b)" />
         <Pane focusTraversable="true" HBox.hgrow="ALWAYS" />
         <Label fx:id="rightStatusLabel" alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" text="Right Status" HBox.hgrow="ALWAYS" />
         <ProgressBar fx:id="progressBar" prefWidth="200.0" progress="0.0" />
