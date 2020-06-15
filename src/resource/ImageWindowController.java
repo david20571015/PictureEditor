@@ -21,6 +21,8 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
+import javafx.scene.effect.ColorAdjust;
+import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
@@ -31,6 +33,8 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
+import javafx.beans.binding.Binding;
+import javafx.beans.binding.Bindings;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 
@@ -66,6 +70,14 @@ public class ImageWindowController {
     private Slider penSizeSlider;
     @FXML
     private TextField penSizeTextField;
+    @FXML
+    private Slider saturationSlider;
+    @FXML
+    private Slider brightnessSlider;
+    @FXML
+    private Slider hueSlider;
+    @FXML
+    private Slider contrastSlider;
     @FXML
     private Label positionLabel;
     @FXML
@@ -132,6 +144,17 @@ public class ImageWindowController {
         imageView.getPen().radiusProperty().bind(penSizeSlider.valueProperty());
         imageView.getPen().setVisible(true);
 
+        ColorAdjust colorAdjust = new ColorAdjust();
+        colorAdjust.saturationProperty().bind(saturationSlider.valueProperty());
+        colorAdjust.brightnessProperty().bind(brightnessSlider.valueProperty());
+        colorAdjust.hueProperty().bind(hueSlider.valueProperty());
+        colorAdjust.contrastProperty().bind(contrastSlider.valueProperty());
+
+        saturationSlider.valueProperty().addListener((v, ov, nv) -> imageView.setEffect(colorAdjust));
+        brightnessSlider.valueProperty().addListener((v, ov, nv) -> imageView.setEffect(colorAdjust));
+        hueSlider.valueProperty().addListener((v, ov, nv) -> imageView.setEffect(colorAdjust));
+        contrastSlider.valueProperty().addListener((v, ov, nv) -> imageView.setEffect(colorAdjust));
+
         imageView.setOnScroll(e -> {
             int deltaY = (int) e.getDeltaY();
             imageView.zoomFactor += deltaY * Canvas.ZOOM_RATE;
@@ -141,8 +164,11 @@ public class ImageWindowController {
             this.zoomLabel.setText(String.valueOf((int) (imageView.zoomFactor * 100.)) + "% ");
         });
 
-        imageView.setOnMouseMoved(e -> {
+        imageView.setOnMouseEntered(e -> {
             imageView.getScene().setCursor(Cursor.CROSSHAIR);
+        });
+
+        imageView.setOnMouseMoved(e -> {
             this.positionLabel.setText("(" + (int) e.getX() + ", " + (int) e.getY() + ") ");
 
             Color color = imageView.getImage().getPixelReader().getColor((int) e.getX(), (int) e.getY());
@@ -184,6 +210,7 @@ public class ImageWindowController {
         });
 
         imageView.setOnMouseExited(e -> {
+            imageView.getScene().setCursor(Cursor.DEFAULT);
             this.positionLabel.setText("(-, -)");
             this.colorRGBLabel.setText("(-, -, -)");
             this.colorHSBLabel.setText("(-, -, -)");
@@ -198,6 +225,15 @@ public class ImageWindowController {
         tab.setOnSelectionChanged(e -> {
             this.sizeLabel.setText(
                     (int) (imageView.getImage().getWidth()) + " x " + (int) (imageView.getImage().getHeight()));
+            saturationSlider.valueProperty().unbind();
+            brightnessSlider.valueProperty().unbind();
+            hueSlider.valueProperty().unbind();
+            contrastSlider.valueProperty().unbind();
+
+            saturationSlider.setValue(((ColorAdjust) imageView.getEffect()).getSaturation());
+            brightnessSlider.setValue(((ColorAdjust) imageView.getEffect()).getBrightness());
+            hueSlider.setValue(((ColorAdjust) imageView.getEffect()).getHue());
+            contrastSlider.setValue(((ColorAdjust) imageView.getEffect()).getContrast());
         });
 
         this.imageTabPane.getTabs().add(tab);

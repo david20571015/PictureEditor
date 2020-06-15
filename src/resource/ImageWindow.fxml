@@ -75,10 +75,14 @@
                      <content>
                         <AnchorPane prefHeight="200.0" prefWidth="200.0">
                            <children>
-                              <Label layoutX="14.0" layoutY="7.0" text="Saturation" />
-                              <Slider fx:id="saturation" layoutX="14.0" layoutY="31.0" />
-                              <Label layoutX="14.0" layoutY="54.0" text="brightness" />
-                              <Slider fx:id="brightness" layoutX="14.0" layoutY="76.0" />
+                              <Label layoutX="14.0" layoutY="10.0" text="Saturation" />
+                              <Slider fx:id="saturationSlider" blockIncrement="0.1" layoutX="14.0" layoutY="30.0" max="1.0" min="-1.0" />
+                              <Label layoutX="14.0" layoutY="50.0" text="brightness" />
+                              <Slider fx:id="brightnessSlider" blockIncrement="0.1" layoutX="14.0" layoutY="70.0" max="1.0" min="-1.0" />
+                              <Label layoutX="14.0" layoutY="90.0" text="Hue" />
+                              <Slider fx:id="hueSlider" blockIncrement="0.1" layoutX="14.0" layoutY="110.0" max="1.0" min="-1.0" />
+                              <Label layoutX="14.0" layoutY="130.0" text="Contrast" />
+                              <Slider fx:id="contrastSlider" blockIncrement="0.1" layoutX="14.0" layoutY="150.0" max="1.0" min="-1.0" />
                            </children>
                         </AnchorPane>
                      </content></TitledPane>
