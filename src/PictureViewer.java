@@ -30,8 +30,8 @@ public class PictureViewer extends Application {
         arg0.setOnCloseRequest(new EventHandler <WindowEvent>() {
             @Override
             public void handle(WindowEvent event) {
-            loader.getController().record();
-            System.out.print("close");
+                PictureViewerController pictureViewerController = loader.getController();
+                pictureViewerController.record();
             }
         });
     }
