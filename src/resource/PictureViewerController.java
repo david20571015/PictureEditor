@@ -2,18 +2,24 @@ package src.resource;
 
 import src.window.ImageWindow;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
@@ -47,6 +53,13 @@ public class PictureViewerController {
 
     private ImageWindow imageWindow = null;
     private ArrayList<Text> pathtext = new ArrayList<Text>();
+    TreeItem<File> item = new TreeItem<>();
+    MenuItem favorite = new MenuItem("add to Favorite");
+    MenuItem delete = new MenuItem("delete");
+    ContextMenu cm;
+    File file;
+    FileWriter writer;
+    FileReader reader;
 
     @FXML
     private MenuItem openMenuItem;
@@ -64,6 +77,75 @@ public class PictureViewerController {
     private Label rightStatusLabel;
     @FXML
     private ProgressBar progressBar;
+    @FXML
+    private TreeView<File> favoriteTreeView;
+    @FXML
+    private TitledPane favoriteTitledPane;
+
+    @FXML
+    void initialize() {
+        file = new File(".//src//resource//favorite.txt");
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        favoriteTreeView.setShowRoot(false);
+        favoriteTreeView.setRoot(item);
+        favoriteTreeView.setCellFactory(new Callback<TreeView<File>, TreeCell<File>>() {
+            public TreeCell<File> call(TreeView<File> tv) {
+                return new TreeCell<File>() {
+                    @Override
+                    protected void updateItem(File item, boolean empty) {
+                        super.updateItem(item, empty);
+
+                        setText((empty || item == null) ? "" : item.getName());
+                    }
+                };
+            }
+        });
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(".//src//resource//favorite.txt"));
+            String favoritepath = reader.readLine();
+            while (favoritepath != null) {
+                System.out.println("reading");
+                File f = new File(favoritepath);
+                if (f.exists()) {
+                    favoriteTreeView.getRoot().getChildren().add(new TreeItem<File>(f));
+                    favoriteTreeView.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+                        if (e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 2) {
+                            showImagesInFolder(favoriteTreeView.getSelectionModel().getSelectedItems().get(0));
+                        } else if (e.getButton() == MouseButton.SECONDARY) {
+                            showDeleteBox(e, favoriteTreeView.getSelectionModel().getSelectedItems().get(0));
+                        }
+                    });
+                }
+                favoritepath = reader.readLine();
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void record() {
+        System.out.println("recording");
+        try {
+            writer = new FileWriter(".//src//resource//favorite.txt");
+            if (!favoriteTreeView.getRoot().getChildren().isEmpty()) {
+                for (int i = 0; i < favoriteTreeView.getRoot().getChildren().size() - 1; i++) {
+                    writer.write(favoriteTreeView.getRoot().getChildren().get(i).getValue().toString() + "\n");
+                }
+                writer.write(favoriteTreeView.getRoot().getChildren()
+                        .get(favoriteTreeView.getRoot().getChildren().size() - 1).getValue().toString() + "\n");
+            }
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     @FXML
     void openMenuItemOnAction(final ActionEvent event) {
@@ -95,17 +177,64 @@ public class PictureViewerController {
             }
         });
 
-        folderTreeView.addEventHandler(MouseEvent.MOUSE_CLICKED,
-                e -> showImagesInFolder(folderTreeView.getSelectionModel().getSelectedItems().get(0)));
+        folderTreeView.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+            if (e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 2) {
+                showImagesInFolder(folderTreeView.getSelectionModel().getSelectedItems().get(0));
+            } else if (e.getButton() == MouseButton.SECONDARY) {
+                showFavoriteBox(e, folderTreeView.getSelectionModel().getSelectedItems().get(0));
+            }
+        });
 
         folderTitledPane.setContent(folderTreeView);
         changefolderPathFlowPane(parsedPath);
         addImageIntoFolder(currentFolderPath);
     }
 
+    private void showFavoriteBox(MouseEvent e, TreeItem<File> folderPath) {
+        cm = new ContextMenu(favorite);
+        cm.show(folderTreeView, e.getScreenX(), e.getScreenY());
+        cm.setOnAction(ev -> {
+            if (ev.getTarget().equals(favorite)) {
+                boolean has = false;
+                for (int i = 0; i < favoriteTreeView.getRoot().getChildren().size(); i++) {
+                    if (favoriteTreeView.getRoot().getChildren().get(i).getValue() == folderPath.getValue())
+                        has = true;
+                }
+                if (!has) {
+                    favoriteTreeView.setShowRoot(false);
+                    favoriteTreeView.getRoot().getChildren().add(new TreeItem<File>(folderPath.getValue()));
+                    favoriteTreeView.addEventHandler(MouseEvent.MOUSE_CLICKED, eve -> {
+                        if (eve.getButton() == MouseButton.PRIMARY && e.getClickCount() == 2) {
+                            showImagesInFolder(favoriteTreeView.getSelectionModel().getSelectedItems().get(0));
+                        } else if (eve.getButton() == MouseButton.SECONDARY) {
+                            showDeleteBox(eve, favoriteTreeView.getSelectionModel().getSelectedItems().get(0));
+                        }
+                    });
+                    cm.hide();
+                }
+
+            }
+        });
+    }
+
+    private void showDeleteBox(MouseEvent e, TreeItem<File> folderPath) {
+        cm = new ContextMenu(delete);
+        cm.show(favoriteTreeView, e.getScreenX(), e.getScreenY());
+        cm.setOnAction(ev -> {
+            if (ev.getTarget().equals(delete)) {
+                favoriteTreeView.getRoot().getChildren().remove(favoriteTreeView.getSelectionModel().getSelectedItem());
+            }
+        });
+    }
+
+    @FXML
+    void onMouseClicked(MouseEvent event) {
+        if (cm != null)
+            cm.hide();
+    }
+
     private void showImagesInFolder(TreeItem<File> folderPath) {
         if (!folderPath.getValue().equals(currentShowFolderPath)) {
-
             rightStatusLabel.setText("Loading images");
             addImageIntoFolder(folderPath.getValue());
             rightStatusLabel.setText("Complete");
@@ -126,12 +255,12 @@ public class PictureViewerController {
         File[] images = path.listFiles(File::isFile);
         double fileCounter = 1;
         for (File image : images) {
+            System.out.println(image.);
             Boolean ispictureformat = false;
             for (String s : pictureformat) {
                 if (image.toString().substring(image.toString().length() - s.length()).toLowerCase().equals(s))
                     ispictureformat = true;
             }
-
             if (ispictureformat) {
                 ImageFilePane img = new ImageFilePane(image);
                 img.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -254,6 +383,9 @@ class FolderItem extends TreeItem<File> {
 
     public FolderItem(File rootPath) {
         super(rootPath);
+    }
+
+    public FolderItem() {
     }
 
     @Override
