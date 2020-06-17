@@ -255,7 +255,7 @@ public class PictureViewerController {
         File[] images = path.listFiles(File::isFile);
         double fileCounter = 1;
         for (File image : images) {
-            System.out.println(image.);
+            // System.out.println(image.);
             Boolean ispictureformat = false;
             for (String s : pictureformat) {
                 if (image.toString().substring(image.toString().length() - s.length()).toLowerCase().equals(s))

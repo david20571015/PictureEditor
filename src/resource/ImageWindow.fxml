@@ -31,7 +31,7 @@
         </Menu>
         <Menu mnemonicParsing="false" text="Edit">
           <items>
-            <MenuItem mnemonicParsing="false" text="Delete" />
+            <MenuItem fx:id="undoMenuItem" mnemonicParsing="false" onAction="#UndoMenuItemOnAction" text="Undo" />
           </items>
         </Menu>
         <Menu mnemonicParsing="false" text="Help">

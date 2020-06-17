@@ -6,6 +6,7 @@ import src.operation.imageoperation.Pen;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
@@ -22,7 +23,6 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.ColorAdjust;
-import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
@@ -33,8 +33,6 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
-import javafx.beans.binding.Binding;
-import javafx.beans.binding.Bindings;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 
@@ -44,6 +42,8 @@ public class ImageWindowController {
     private MenuItem openMenuItem;
     @FXML
     private MenuItem saveMenuItem;
+    @FXML
+    private MenuItem undoMenuItem;
     @FXML
     private TabPane imageTabPane;
     @FXML
@@ -230,6 +230,7 @@ public class ImageWindowController {
             hueSlider.valueProperty().unbind();
             contrastSlider.valueProperty().unbind();
 
+            imageView.setEffect(new ColorAdjust(0, 0, 0, 0));
             saturationSlider.setValue(((ColorAdjust) imageView.getEffect()).getSaturation());
             brightnessSlider.setValue(((ColorAdjust) imageView.getEffect()).getBrightness());
             hueSlider.setValue(((ColorAdjust) imageView.getEffect()).getHue());
@@ -242,7 +243,7 @@ public class ImageWindowController {
     @FXML
     void filterButtonOnAction(ActionEvent event) {
         Tab currentTab = imageTabPane.getSelectionModel().getSelectedItem();
-        ImageView currentImageView = (ImageView) ((ScrollPane) currentTab.getContent()).getContent();
+        Canvas currentImageView = (Canvas) ((ScrollPane) currentTab.getContent()).getContent();
         Image newImage = null;
 
         if (event.getSource() == meanBlur)
@@ -260,7 +261,19 @@ public class ImageWindowController {
         else if (event.getSource() == grayScale)
             newImage = Filter.toGrayScale(currentImageView.getImage());
 
+        currentImageView.operations.add(newImage);
+        System.out.printf("add img, Operation.size() = %d \n", currentImageView.operations.size());
         currentImageView.setImage(newImage);
+    }
+
+    @FXML
+    void UndoMenuItemOnAction(ActionEvent event) {
+        Tab currentTab = imageTabPane.getSelectionModel().getSelectedItem();
+        Canvas currentCanvas = (Canvas) ((ScrollPane) currentTab.getContent()).getContent();
+
+        System.out.printf("undo, Operation.size() = %d \n", currentCanvas.operations.size());
+        currentCanvas.operations.remove(currentCanvas.operations.size() - 1);
+        currentCanvas.setImage(currentCanvas.operations.get(currentCanvas.operations.size() - 1));
     }
 
     public void closeStage() {
@@ -276,6 +289,8 @@ class Canvas extends ImageView {
 
     private Pen pen = new Pen();
     public int penX, penY;
+
+    public ArrayList<Image> operations = new ArrayList<Image>();
 
     public Canvas(String filePath) {
         super(filePath);
