@@ -14,7 +14,7 @@ public class ImageWindow extends Stage {
 
     public ImageWindow() {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("..\\resource\\ImageWindow.fxml"));
-        this.imageWindowController = loader.getController();
+
         try {
             Scene scene = new Scene(loader.load());
             this.setScene(scene);
@@ -22,6 +22,7 @@ public class ImageWindow extends Stage {
             System.out.println("ImageWindow.fxml exception");
         }
 
+        this.imageWindowController = loader.getController();
         setOnCloseRequest(e -> this.imageWindowController.closeStage());
     }
 
