@@ -2,6 +2,7 @@ package src.resource;
 
 import src.window.ImageWindow;
 
+import java.awt.Desktop;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,6 +65,8 @@ public class PictureViewerController {
 
     @FXML
     private MenuItem openMenuItem;
+    @FXML
+    private MenuItem aboutMenuItem;
     @FXML
     private TitledPane folderTitledPane;
     @FXML
@@ -188,6 +192,15 @@ public class PictureViewerController {
         folderTitledPane.setContent(folderTreeView);
         changefolderPathFlowPane(parsedPath);
         addImageIntoFolder(currentFolderPath);
+    }
+
+    @FXML
+    void aboutMenuItemOnAction(final ActionEvent event) {
+        try{
+            URL srcLink=new URL("https://github.com/david20571015/java_final_project");
+            Desktop.getDesktop().browse(srcLink.toURI());
+        }
+        catch(Exception e){}
     }
 
     private void showFavoriteBox(MouseEvent e, TreeItem<File> folderPath) {
