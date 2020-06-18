@@ -53,13 +53,13 @@ public class PictureViewerController {
 
     private ImageWindow imageWindow = null;
     private ArrayList<Text> pathtext = new ArrayList<Text>();
-    TreeItem<File> item = new TreeItem<>();
-    MenuItem favorite = new MenuItem("add to Favorite");
-    MenuItem delete = new MenuItem("delete");
-    ContextMenu cm;
-    File file;
-    FileWriter writer;
-    FileReader reader;
+    private TreeItem<File> item = new TreeItem<>();
+    private MenuItem favorite = new MenuItem("add to Favorite");
+    private MenuItem delete = new MenuItem("delete");
+    private ContextMenu cm;
+    private File file;
+    private FileWriter writer;
+    private FileReader reader;
 
     @FXML
     private MenuItem openMenuItem;
