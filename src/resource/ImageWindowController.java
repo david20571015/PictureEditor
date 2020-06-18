@@ -7,6 +7,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Vector;
 
 import javax.imageio.ImageIO;
 
@@ -44,6 +45,8 @@ public class ImageWindowController {
     private MenuItem saveMenuItem;
     @FXML
     private MenuItem undoMenuItem;
+    @FXML
+    private MenuItem redoMenuItem;
     @FXML
     private TabPane imageTabPane;
     @FXML
@@ -243,27 +246,33 @@ public class ImageWindowController {
     @FXML
     void filterButtonOnAction(ActionEvent event) {
         Tab currentTab = imageTabPane.getSelectionModel().getSelectedItem();
-        Canvas currentImageView = (Canvas) ((ScrollPane) currentTab.getContent()).getContent();
+        Canvas currentCanvas = (Canvas) ((ScrollPane) currentTab.getContent()).getContent();
         Image newImage = null;
 
         if (event.getSource() == meanBlur)
-            newImage = Filter.computeFilter(currentImageView.getImage(), Filter.MEAN_BLUR);
+            newImage = Filter.computeFilter(currentCanvas.getImage(), Filter.MEAN_BLUR);
         else if (event.getSource() == gaussianBlur)
-            newImage = Filter.computeFilter(currentImageView.getImage(), Filter.GAUSSIAN_BLUR);
+            newImage = Filter.computeFilter(currentCanvas.getImage(), Filter.GAUSSIAN_BLUR);
         else if (event.getSource() == sharpen)
-            newImage = Filter.computeFilter(currentImageView.getImage(), Filter.SHARPEN);
+            newImage = Filter.computeFilter(currentCanvas.getImage(), Filter.SHARPEN);
         else if (event.getSource() == relief)
-            newImage = Filter.computeFilter(currentImageView.getImage(), Filter.RELIEF);
+            newImage = Filter.computeFilter(currentCanvas.getImage(), Filter.RELIEF);
         else if (event.getSource() == unsharpMasking)
-            newImage = Filter.computeFilter(currentImageView.getImage(), Filter.UNSHAPR_MASKING);
+            newImage = Filter.computeFilter(currentCanvas.getImage(), Filter.UNSHAPR_MASKING);
         else if (event.getSource() == negative)
-            newImage = Filter.toNegative(currentImageView.getImage());
+            newImage = Filter.toNegative(currentCanvas.getImage());
         else if (event.getSource() == grayScale)
-            newImage = Filter.toGrayScale(currentImageView.getImage());
+            newImage = Filter.toGrayScale(currentCanvas.getImage());
 
-        currentImageView.operations.add(newImage);
-        System.out.printf("add img, Operation.size() = %d \n", currentImageView.operations.size());
-        currentImageView.setImage(newImage);
+        while (currentCanvas.operationIter < currentCanvas.operations.size() - 1)
+            currentCanvas.operations.remove(currentCanvas.operationIter + 1);
+
+        currentCanvas.operations.add(newImage);
+        currentCanvas.operationIter++;
+
+        System.out.printf("add img, Operation.size() = %d, iter = %d\n", currentCanvas.operations.size(),
+                currentCanvas.operationIter);
+        currentCanvas.setImage(newImage);
     }
 
     @FXML
@@ -271,9 +280,23 @@ public class ImageWindowController {
         Tab currentTab = imageTabPane.getSelectionModel().getSelectedItem();
         Canvas currentCanvas = (Canvas) ((ScrollPane) currentTab.getContent()).getContent();
 
-        System.out.printf("undo, Operation.size() = %d \n", currentCanvas.operations.size());
-        currentCanvas.operations.remove(currentCanvas.operations.size() - 1);
-        currentCanvas.setImage(currentCanvas.operations.get(currentCanvas.operations.size() - 1));
+        if (currentCanvas.operationIter > 0)
+            currentCanvas.setImage(currentCanvas.operations.get(--currentCanvas.operationIter));
+
+        System.out.printf("undo, Operation.size() = %d, iter = %d\n", currentCanvas.operations.size(),
+                currentCanvas.operationIter);
+    }
+
+    @FXML
+    void RedoMenuItemOnAction(ActionEvent event) {
+        Tab currentTab = imageTabPane.getSelectionModel().getSelectedItem();
+        Canvas currentCanvas = (Canvas) ((ScrollPane) currentTab.getContent()).getContent();
+
+        if (currentCanvas.operationIter < currentCanvas.operations.size() - 1)
+            currentCanvas.setImage(currentCanvas.operations.get(++currentCanvas.operationIter));
+
+        System.out.printf("redo, Operation.size() = %d, iter = %d\n", currentCanvas.operations.size(),
+                currentCanvas.operationIter);
     }
 
     public void closeStage() {
@@ -290,10 +313,14 @@ class Canvas extends ImageView {
     private Pen pen = new Pen();
     public int penX, penY;
 
-    public ArrayList<Image> operations = new ArrayList<Image>();
+    public Image origImage;
+    public Vector<Image> operations = new Vector<Image>();
+    public int operationIter = 0;
 
     public Canvas(String filePath) {
         super(filePath);
+        this.origImage = new Image(filePath);
+        this.operations.add(this.origImage);
     }
 
     public Pen getPen() {
