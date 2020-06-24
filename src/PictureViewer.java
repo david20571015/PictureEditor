@@ -2,13 +2,12 @@ package src;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.event.EventHandler;
 
-import src.resource.PictureViewerController;
+import src.controller.PictureViewerController;
 
 public class PictureViewer extends Application {
     public static void main(String[] args) {
@@ -27,7 +26,7 @@ public class PictureViewer extends Application {
         arg0.setScene(scene);
         arg0.setTitle("Picture Viewer");
         arg0.show();
-        arg0.setOnCloseRequest(new EventHandler <WindowEvent>() {
+        arg0.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent event) {
                 PictureViewerController pictureViewerController = loader.getController();
