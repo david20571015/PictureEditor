@@ -1,6 +1,7 @@
 package src.operation.imageoperation;
 
 import src.operation.Operation;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
@@ -8,6 +9,9 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 
 public class ImageOperation implements Operation {
+    // @Override
+    // void apply(Canvas layer){};
+
     static protected Image conv2d(Image inputImage, double[][] mask) {
         WritableImage output = new WritableImage(inputImage.getPixelReader(), (int) inputImage.getWidth(),
                 (int) inputImage.getHeight());
