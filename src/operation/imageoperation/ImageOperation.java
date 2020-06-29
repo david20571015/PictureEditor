@@ -1,7 +1,6 @@
 package src.operation.imageoperation;
 
 import src.operation.Operation;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;

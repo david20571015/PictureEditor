@@ -1,23 +1,15 @@
 package src.controller;
 
-import src.operation.imageoperation.Filter;
-import src.operation.imageoperation.Pen;
-
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Vector;
 
 import javax.imageio.ImageIO;
 
 import javafx.fxml.FXML;
-import javafx.scene.Cursor;
-import javafx.scene.Group;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
@@ -29,27 +21,20 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
-import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.PixelWriter;
-import javafx.scene.image.WritableImage;
-import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.Node;
 import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
-import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 
 public class ImageWindowController {
-
     @FXML
     private MenuItem openMenuItem;
     @FXML
@@ -153,6 +138,12 @@ public class ImageWindowController {
         }
     }
 
+    private MultiLayerCanvas getCurreMultiLayerCanvas() {
+        Tab currentTab = imageTabPane.getSelectionModel().getSelectedItem();
+        MultiLayerCanvas currentMLC = (MultiLayerCanvas) ((ScrollPane) currentTab.getContent()).getContent();
+        return currentMLC;
+    }
+
     public void addImage(File file) {
         Image baseImage = null;
         try {
@@ -165,7 +156,9 @@ public class ImageWindowController {
         ColumnConstraints column = new ColumnConstraints();
         layersGridPane.getColumnConstraints().add(column);
 
-        layersGridPane.add(new Label("base"), 0, 1, 1, 1);
+        Label label = new Label("base");
+        label.setPadding(new Insets(5, 5, 5, 5));
+        layersGridPane.add(label, 0, 1, 1, 1);
         layersGridPane.add(new ImageView(), 1, 1, 1, 1);
 
         CheckBox cb = new CheckBox();
@@ -329,6 +322,17 @@ public class ImageWindowController {
     }
 
     @FXML
+    void layersGridPaneOnMouseClicked(MouseEvent event) {
+        Node clickedNode = event.getPickResult().getIntersectedNode();
+        if (clickedNode instanceof ImageView) {
+            int index = GridPane.getRowIndex(clickedNode) - 1;
+            getCurreMultiLayerCanvas().setCurrrntLayer(index);
+            getCurreMultiLayerCanvas().updateLayersDetail(layersGridPane);
+        }
+
+    }
+
+    @FXML
     void addNewLayerButtomOnAction(ActionEvent event) {
         Tab currentTab = imageTabPane.getSelectionModel().getSelectedItem();
         MultiLayerCanvas currentCanvas = (MultiLayerCanvas) ((ScrollPane) currentTab.getContent()).getContent();
@@ -338,7 +342,9 @@ public class ImageWindowController {
         ColumnConstraints column = new ColumnConstraints();
         layersGridPane.getColumnConstraints().add(column);
 
-        layersGridPane.add(new Label(String.valueOf(newRowIndex - 1)), 0, newRowIndex, 1, 1);
+        Label label = new Label(String.valueOf(newRowIndex - 1));
+        label.setPadding(new Insets(5, 5, 5, 5));
+        layersGridPane.add(label, 0, newRowIndex, 1, 1);
         layersGridPane.add(new ImageView(), 1, newRowIndex, 1, 1);
 
         CheckBox cb = new CheckBox();
@@ -356,20 +362,16 @@ public class ImageWindowController {
             Set<Node> deleteNodes = new HashSet<>();
             for (Node node : layersGridPane.getChildren()) {
                 Integer row = GridPane.getRowIndex(node);
-
                 row = (row == null ? 0 : row);
-
                 if (row > rowIndex) {
                     if (GridPane.getColumnIndex(node) == 0 || GridPane.getColumnIndex(node) == null) {
                         ((Label) node).setText(String.valueOf(row - 2));
                     }
                     GridPane.setRowIndex(node, row - 1);
                 } else if (row == rowIndex) {
-                    // collect matching rows for deletion
                     deleteNodes.add(node);
                 }
             }
-            // remove nodes from row
             layersGridPane.getChildren().removeAll(deleteNodes);
 
             currentCanvas.updateLayersDetail(layersGridPane);

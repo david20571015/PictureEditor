@@ -7,6 +7,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
@@ -18,25 +19,23 @@ public class MultiLayerCanvas extends StackPane {
     private Image originalImage;
     private int imgWidth;
     private int imgHeight;
+    private SingleLayerCanvas currentSLC;
+    private int currentSLCIndex;
 
     public MultiLayerCanvas(Image img) {
         originalImage = img;
         imgWidth = (int) img.getWidth();
         imgHeight = (int) img.getHeight();
-        // System.out.println("img" + (int) (img.getWidth()) + " " + (int)
-        // (img.getHeight()));
-        // System.out.println("originalImage" + (int) (originalImage.getWidth()) + " " +
-        // (int) (originalImage.getHeight()));
         SingleLayerCanvas baseLayer = new SingleLayerCanvas(imgWidth, imgHeight, img);
+        currentSLC = baseLayer;
+        currentSLCIndex = 0;
         getChildren().add(baseLayer);
-        // System.out.println("baseLayer" + (int) (baseLayer.getWidth()) + " " + (int)
-        // (baseLayer.getHeight()));
     }
 
-    int testIndex = 1;
+    int testIndex = 1;// test
 
     public void addLayer() {
-        SingleLayerCanvas subLayer = new SingleLayerCanvas(imgWidth, imgHeight, testIndex++);
+        SingleLayerCanvas subLayer = new SingleLayerCanvas(imgWidth, imgHeight, testIndex++);// test
         getChildren().add(subLayer);
     }
 
@@ -46,32 +45,47 @@ public class MultiLayerCanvas extends StackPane {
         return null;
     }
 
+    public void setCurrrntLayer(int index) {
+        ObservableList<Node> canvases = this.getChildren();
+        this.currentSLC = (SingleLayerCanvas) (canvases.get(index));
+        this.currentSLCIndex = index;
+
+        this.currentSLC.getGraphicsContext2D().fillRect(100, 100, 100, 100);
+        System.out.println("set current layer " + index);
+    }
+
+    public SingleLayerCanvas getCurrentLayer() {
+        return currentSLC;
+    }
+
     public void updateLayersDetail(GridPane layersGridPane) {
         ObservableList<Node> childrens = layersGridPane.getChildren();
         ObservableList<Node> canvases = this.getChildren();
-        // for (Node node : childrens) {
-        // System.out.println(node + " " + GridPane.getColumnIndex(node) + " " +
-        // GridPane.getRowIndex(node));
-        // }
         for (Node node : childrens) {
-            // System.out.println("node " + node);
             if (node instanceof Group)
                 continue;
-
             Integer colIndex = GridPane.getColumnIndex(node);
             colIndex = (colIndex == null ? 0 : colIndex);
             Integer rowIndex = GridPane.getRowIndex(node);
-            rowIndex = (rowIndex == null ? 0 : rowIndex);
+            rowIndex = (rowIndex == null ? 0 : rowIndex) - 1;
 
-            if (colIndex == 1 && rowIndex > 0) {
+            if (colIndex == 0 && rowIndex >= 0) {
+                Label label = (Label) node;
+                if (rowIndex == currentSLCIndex)
+                    label.setStyle("-fx-background-color : yellow");
+                else
+                    label.setStyle(null);
+            }
+
+            if (colIndex == 1 && rowIndex >= 0) {
                 ImageView iv = (ImageView) node;
                 iv.setPreserveRatio(true);
                 iv.setSmooth(true);
                 iv.setCache(true);
-                iv.setImage(((SingleLayerCanvas) canvases.get(rowIndex - 1)).snapshot(null, null));
+                iv.setImage(((SingleLayerCanvas) canvases.get(rowIndex)).snapshot(null, null));
                 iv.setFitWidth(50);
             }
-            if (colIndex == 2 && rowIndex > 0) {
+            if (colIndex == 2 && rowIndex >= 0) {
                 int no = GridPane.getRowIndex(node) - 1;
                 CheckBox cb = (CheckBox) node;
                 cb.setSelected(((SingleLayerCanvas) canvases.get(no)).isVisible());
@@ -97,9 +111,15 @@ public class MultiLayerCanvas extends StackPane {
     public class SingleLayerCanvas extends Canvas {
         ArrayList<Image> snapShotRecord = new ArrayList<Image>();
 
+        // test
         public SingleLayerCanvas(int width, int height, int testIndex) {
             super(width, height);
             super.getGraphicsContext2D().fillText(String.valueOf(testIndex), testIndex * 50, testIndex * 50);
+        }
+        // test
+
+        public SingleLayerCanvas(int width, int height) {
+            super(width, height);
         }
 
         public SingleLayerCanvas(int width, int height, Image img) {
