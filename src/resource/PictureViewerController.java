@@ -27,6 +27,7 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
@@ -46,6 +47,15 @@ import javafx.stage.DirectoryChooser;
 import javafx.util.Callback;
 import javafx.scene.text.Text;
 
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.imaging.ImageProcessingException;
+import com.drew.imaging.jpeg.JpegMetadataReader;
+import com.drew.imaging.jpeg.JpegProcessingException;
+import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
+import com.drew.metadata.exif.ExifReader;
+import com.drew.metadata.iptc.IptcReader;
+import com.drew.metadata.*;
+
 public class PictureViewerController {
     private File currentFolderPath;
     private File currentShowFolderPath;
@@ -60,6 +70,9 @@ public class PictureViewerController {
     private File file;
     private FileWriter writer;
     private FileReader reader;
+
+    String[] pictureformat = { ".bmp", ".png", ".gif", ".jpeg", ".jpg" };
+    String[] exifcanread = { ".jpeg", ".gif", ".png"};
 
     @FXML
     private MenuItem openMenuItem;
@@ -81,6 +94,8 @@ public class PictureViewerController {
     private TreeView<File> favoriteTreeView;
     @FXML
     private TitledPane favoriteTitledPane;
+    @FXML
+    private Text imformationOfFileText;
 
     @FXML
     void initialize() {
@@ -247,8 +262,6 @@ public class PictureViewerController {
         }
     }
 
-    String[] pictureformat = { ".bmp", ".png", ".gif", ".jpeg", ".jpg" };
-
     private void addImageIntoFolder(File path) {
         imageFlowPane.getChildren().clear();
 
@@ -261,6 +274,7 @@ public class PictureViewerController {
                 if (image.toString().substring(image.toString().length() - s.length()).toLowerCase().equals(s))
                     ispictureformat = true;
             }
+
             if (ispictureformat) {
                 ImageFilePane img = new ImageFilePane(image);
                 img.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -273,12 +287,59 @@ public class PictureViewerController {
                                 imageWindow.show();
                                 imageWindow.getController().addImage(image);
                             }
+                        if (e.getClickCount() == 1) {
+                            Boolean isexifcanreBoolean = false;
+                            for (String s : exifcanread) {
+                                if (image.toString().substring(image.toString().length() - s.length()).toLowerCase()
+                                        .equals(s))
+                                    isexifcanreBoolean = true;
+                            }
+                            if (isexifcanreBoolean) {
+                                try {
+                                    Metadata metadata = ImageMetadataReader.readMetadata(image);
+                                    print(metadata);
+                                } catch (ImageProcessingException eee) {
+                                    print(eee);
+                                } catch (IOException ev) {
+                                    print(ev);
+                                }
+                            }else{
+                                imformationOfFileText.setText("");
+                            }
+                        }
                     }
                 });
                 imageFlowPane.getChildren().add(img);
             }
             progressBar.setProgress(fileCounter++ / images.length);
         }
+    }
+
+    private void print(Metadata metadata) {
+        imformationOfFileText.setText("");
+        // imformationOfFileTextField.setText("");
+        for (Directory directory : metadata.getDirectories()) {
+            String total = new String();
+            for (Tag tag : directory.getTags()) {
+                String s = tag.toString();
+                int delete = s.indexOf(']', 1);
+                s = s.substring(delete + 2);
+                imformationOfFileText.setText(imformationOfFileText.getText() + s + "\n");
+                // String s = tag.toString();
+                // int delete = s.indexOf(']', 1);
+                // s = s.substring(delete + 2);
+                // total = total +s;
+            }
+            // System.out.print(total);
+            // imformationOfFileTextField.setText(total);
+            for (String error : directory.getErrors()) {
+                System.err.println("ERROR: " + error);
+            }
+        }
+    }
+
+    private void print(Exception exception) {
+        System.err.println("EXCEPTION: " + exception);
     }
 
     private void changefolderPathFlowPane(String[] s) {

@@ -12,11 +12,11 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.TreeView?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
 
 <VBox onMouseClicked="#onMouseClicked" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="src.resource.PictureViewerController">
    <children>
@@ -80,21 +80,7 @@
             </TabPane>
             <VBox SplitPane.resizableWithParent="false">
                <children>
-                  <TitledPane animated="false" maxHeight="1.7976931348623157E308" text="Tool Box 1">
-                     <content>
-                        <AnchorPane maxHeight="1.7976931348623157E308" />
-                     </content>
-                  </TitledPane>
-                  <TitledPane animated="false" maxHeight="1.7976931348623157E308" text="Tool Box 2">
-                     <content>
-                        <AnchorPane maxHeight="1.7976931348623157E308" />
-                     </content>
-                  </TitledPane>
-                  <TitledPane animated="false" maxHeight="1.7976931348623157E308" text="Tool Box 3">
-                     <content>
-                        <AnchorPane maxHeight="1.7976931348623157E308" />
-                     </content>
-                  </TitledPane>
+                  <Text fx:id="imformationOfFileText" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="175.0" />
                </children>
             </VBox>
          </items>
