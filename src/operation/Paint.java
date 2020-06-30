@@ -2,8 +2,8 @@ package src.operation;
 
 import javafx.scene.shape.Circle;
 
-public class Pen extends Circle {
-    public Pen() {
+public class Paint extends Circle {
+    public Paint() {
     }
 
     public void setPosition(double xPos, double yPos) {

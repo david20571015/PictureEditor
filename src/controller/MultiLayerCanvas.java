@@ -23,14 +23,12 @@ import javafx.scene.paint.Color;
 
 public class MultiLayerCanvas extends StackPane {
     private ArrayList<SingleLayerCanvas> layerRecord = new ArrayList<SingleLayerCanvas>();
-    private Image originalImage;
     private int imgWidth;
     private int imgHeight;
     private SingleLayerCanvas currentSLC;
     private int currentSLCIndex;
 
     public MultiLayerCanvas(Image img) {
-        originalImage = img;
         imgWidth = (int) img.getWidth();
         imgHeight = (int) img.getHeight();
         SingleLayerCanvas baseLayer = new SingleLayerCanvas(imgWidth, imgHeight, img);
@@ -39,10 +37,16 @@ public class MultiLayerCanvas extends StackPane {
         getChildren().add(baseLayer);
     }
 
-    int testIndex = 1;// test
+    public int getImageWidth() {
+        return imgWidth;
+    }
+
+    public int getImageHeight() {
+        return imgHeight;
+    }
 
     public void addLayer() {
-        SingleLayerCanvas subLayer = new SingleLayerCanvas(imgWidth, imgHeight, testIndex++);// test
+        SingleLayerCanvas subLayer = new SingleLayerCanvas(imgWidth, imgHeight);
         getChildren().add(subLayer);
     }
 
@@ -183,14 +187,6 @@ public class MultiLayerCanvas extends StackPane {
 
     public class SingleLayerCanvas extends Canvas {
         ArrayList<Image> snapShotRecord = new ArrayList<Image>();
-
-        // test
-        public SingleLayerCanvas(int width, int height, int testIndex) {
-            super(width, height);
-            super.getGraphicsContext2D().fillText(String.valueOf(testIndex), testIndex * 50, testIndex * 50);
-
-        }
-        // test
 
         public SingleLayerCanvas(int width, int height) {
             super(width, height);

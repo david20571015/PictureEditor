@@ -24,6 +24,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -117,8 +118,6 @@ public class ImageWindowController {
         Tab currentTab = imageTabPane.getSelectionModel().getSelectedItem();
         Image currentImage = getCurreMultiLayerCanvas().snapshot(null, null);
         File currentFile = new File(currentTab.getText());
-        System.out.println("ImageWindowController.saveMenuItemOnAction()");
-        System.out.println(currentImage.getHeight());
         currentFile = new File(currentFile.getName().split("\\.")[0]);
         BufferedImage bImage = SwingFXUtils.fromFXImage(currentImage, null);
         BufferedImage bbImage = new BufferedImage((int) currentImage.getWidth(), (int) currentImage.getHeight(),
@@ -137,7 +136,6 @@ public class ImageWindowController {
 
         File savePath = fileChooser.showSaveDialog(null);
         String fileExtension = fileChooser.selectedExtensionFilterProperty().get().getDescription();
-        System.out.println(savePath + " " + fileExtension);
         if (savePath != null) {
             try {
                 ImageIO.write(bbImage, fileExtension, savePath);
@@ -232,9 +230,9 @@ public class ImageWindowController {
             // imageView.mouseY = e.getY();
             // imageView.penX = (int) e.getX();
             // imageView.penY = (int) e.getY();
-            // });
+        });
 
-            // imageView.setOnMouseDragged(e -> {
+        multiLayerCanvas.setOnMouseDragged(e -> {
             // if (e.getButton().equals(MouseButton.PRIMARY)) {
             // imageView.getScene().setCursor(Cursor.DISAPPEAR);
             // Circle penCircle = new Circle();
@@ -248,12 +246,18 @@ public class ImageWindowController {
             // imageView.paint((int) e.getX(), (int) e.getY(), (Color)
             // imageView.getPen().getFill());
             // }
+
             // if (e.getButton().equals(MouseButton.SECONDARY)) {
-            // imageView.getScene().setCursor(Cursor.MOVE);
-            // imageView.setTranslateX(imageView.getTranslateX() + e.getX() -
-            // imageView.mouseX);
-            // imageView.setTranslateY(imageView.getTranslateY() + e.getY() -
-            // imageView.mouseY);
+            // multiLayerCanvas.getScene().setCursor(Cursor.MOVE);
+            // multiLayerCanvas.setTranslateX(multiLayerCanvas.getTranslateX() + e.getX());
+            // multiLayerCanvas.setTranslateY(multiLayerCanvas.getTranslateY() + e.getY());
+
+            // // multiLayerCanvas.setTranslateX(multiLayerCanvas.getTranslateX() + e.getX()
+            // -
+            // // multiLayerCanvas.mouseX);
+            // // multiLayerCanvas.setTranslateY(multiLayerCanvas.getTranslateY() + e.getY()
+            // -
+            // // multiLayerCanvas.mouseY);
             // }
         });
 
@@ -272,7 +276,8 @@ public class ImageWindowController {
         Tab tab = new Tab(file.getName(), scrollPane);
 
         tab.setOnSelectionChanged(e -> {
-            this.sizeLabel.setText((int) (multiLayerCanvas.getWidth()) + " x " + (int) (multiLayerCanvas.getHeight()));
+            this.sizeLabel.setText(
+                    (int) (multiLayerCanvas.getImageWidth()) + " x " + (int) (multiLayerCanvas.getImageHeight()));
             multiLayerCanvas.updateLayersDetail(layersGridPane);
             // saturationSlider.valueProperty().unbind();
             // brightnessSlider.valueProperty().unbind();

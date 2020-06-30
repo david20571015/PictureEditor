@@ -56,7 +56,6 @@ public class PictureViewerController {
     private ContextMenu cm;
     private File file;
     private FileWriter writer;
-    private FileReader reader;
 
     @FXML
     private MenuItem openMenuItem;
@@ -130,7 +129,6 @@ public class PictureViewerController {
     }
 
     public void record() {
-        // System.out.println("recording");
         try {
             writer = new FileWriter(".//src//resource//favorite.txt");
             if (!favoriteTreeView.getRoot().getChildren().isEmpty()) {
