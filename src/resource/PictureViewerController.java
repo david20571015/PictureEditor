@@ -284,7 +284,7 @@ public class PictureViewerController {
             // System.out.println(image.);
             Boolean ispictureformat = false;
             for (String s : pictureformat) {
-                if (image.toString().substring(image.toString().length() - s.length()).toLowerCase().equals(s))
+                if (image.toString().endsWith(s))
                     ispictureformat = true;
             }
 
@@ -303,9 +303,8 @@ public class PictureViewerController {
                         if (e.getClickCount() == 1) {
                             Boolean isexifcanreBoolean = false;
                             for (String s : exifcanread) {
-                                if (image.toString().substring(image.toString().length() - s.length()).toLowerCase()
-                                        .equals(s))
-                                    isexifcanreBoolean = true;
+                                if(image.toString().endsWith(s)){
+                                    isexifcanreBoolean = true;}
                             }
                             if (isexifcanreBoolean) {
                                 try {
