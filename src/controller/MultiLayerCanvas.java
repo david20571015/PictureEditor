@@ -108,6 +108,11 @@ public class MultiLayerCanvas extends StackPane {
                 layerRecord.remove(canvas);
     }
 
+    public void undo() {
+        SingleLayerCanvas lastSLC = layerRecord.remove(layerRecord.size() - 1);
+        lastSLC.undo();
+    }
+
     public class SingleLayerCanvas extends Canvas {
         ArrayList<Image> snapShotRecord = new ArrayList<Image>();
 
@@ -132,6 +137,11 @@ public class MultiLayerCanvas extends StackPane {
             snapshot(null, shot);
             snapShotRecord.add(shot);
             layerRecord.add(this);
+        }
+
+        public void undo() {
+            Image lastImage = snapShotRecord.remove(snapShotRecord.size() - 1);
+            getGraphicsContext2D().drawImage(lastImage, 0, 0);
         }
     }
 }

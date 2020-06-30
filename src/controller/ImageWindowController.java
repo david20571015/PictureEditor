@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
+import javax.management.loading.MLet;
 
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -28,6 +29,7 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
@@ -189,78 +191,88 @@ public class ImageWindowController {
         // contrastSlider.valueProperty().addListener((v, ov, nv) ->
         // imageView.setEffect(colorAdjust));
 
-        // imageView.setOnScroll(e -> {
-        // int deltaY = (int) e.getDeltaY();
-        // imageView.zoomFactor += deltaY * Canvas.ZOOM_RATE;
-        // imageView.zoomFactor = Math.max(0.01, Math.min(20.0, imageView.zoomFactor));
-        // imageView.setScaleX(imageView.zoomFactor);
-        // imageView.setScaleY(imageView.zoomFactor);
-        // this.zoomLabel.setText(String.valueOf((int) (imageView.zoomFactor * 100.)) +
-        // "% ");
-        // });
+        multiLayerCanvas.setOnScroll(e -> {
+            double deltaY = e.getDeltaY();
+            deltaY = (deltaY > 0 ? 0.1 : -0.1);
+            if (multiLayerCanvas.getScaleX() > 0.05 && multiLayerCanvas.getScaleY() > 0.05) {
+                multiLayerCanvas.setScaleX(multiLayerCanvas.getScaleX() + deltaY);
+                multiLayerCanvas.setScaleY(multiLayerCanvas.getScaleY() + deltaY);
+            }
+            zoomLabel.setText(String.valueOf((int) (multiLayerCanvas.getScaleX() * 100)) + "% ");
 
-        // imageView.setOnMouseEntered(e -> {
-        // imageView.getScene().setCursor(Cursor.CROSSHAIR);
-        // });
+            // int deltaY = (int) e.getDeltaY();
+            // imageView.zoomFactor += deltaY * Canvas.ZOOM_RATE;
+            // imageView.zoomFactor = Math.max(0.01, Math.min(20.0, imageView.zoomFactor));
+            // imageView.setScaleX(imageView.zoomFactor);
+            // imageView.setScaleY(imageView.zoomFactor);
+            // this.zoomLabel.setText(String.valueOf((int) (imageView.zoomFactor * 100.)) +
+            // "% ");
+        });
 
-        // imageView.setOnMouseMoved(e -> {
-        // this.positionLabel.setText("(" + (int) e.getX() + ", " + (int) e.getY() + ")
-        // ");
+        multiLayerCanvas.setOnMouseEntered(e -> {
+            multiLayerCanvas.getScene().setCursor(Cursor.CROSSHAIR);
+        });
 
-        // Color color = imageView.getImage().getPixelReader().getColor((int) e.getX(),
-        // (int) e.getY());
-        // this.colorRGBLabel.setText("(" + (int) (color.getRed() * 256) + ", " + (int)
-        // (color.getGreen() * 256) + ", "
-        // + (int) (color.getBlue() * 256) + ") ");
-        // this.colorHSBLabel.setText(
-        // "(" + String.format("%.3f", color.getHue()) + ", " + String.format("%.3f",
-        // color.getSaturation())
-        // + ", " + String.format("%.3f", color.getBrightness()) + ") ");
-        // this.colorBlock.setFill(color);
+        multiLayerCanvas.setOnMouseMoved(e -> {
+            int xPos = (int) (e.getX() * multiLayerCanvas.getScaleX());
+            int yPos = (int) (e.getY() * multiLayerCanvas.getScaleY());
 
-        // imageView.getPen().setPosition(e.getX(), e.getY());
-        // });
+            positionLabel.setText("(" + xPos + ", " + yPos + ")");
 
-        // imageView.setOnMousePressed(e -> {
-        // imageView.mouseX = e.getX();
-        // imageView.mouseY = e.getY();
-        // imageView.penX = (int) e.getX();
-        // imageView.penY = (int) e.getY();
-        // });
+            Color color = multiLayerCanvas.snapshot(null, null).getPixelReader().getColor(xPos, yPos);
+            colorRGBLabel.setText("(" + (int) (color.getRed() * 256) + ", " + (int) (color.getGreen() * 256) + ", "
+                    + (int) (color.getBlue() * 256) + ") ");
+            colorHSBLabel.setText(
+                    "(" + String.format("%.3f", color.getHue()) + ", " + String.format("%.3f", color.getSaturation())
+                            + ", " + String.format("%.3f", color.getBrightness()) + ") ");
+            colorBlock.setFill(color);
 
-        // imageView.setOnMouseDragged(e -> {
-        // if (e.getButton().equals(MouseButton.PRIMARY)) {
-        // imageView.getScene().setCursor(Cursor.DISAPPEAR);
-        // Circle penCircle = new Circle();
+            // imageView.getPen().setPosition(e.getX(), e.getY());
+        });
 
-        // penCircle.radiusProperty().bind(penSizeSlider.valueProperty());
-        // penCircle.fillProperty().bind(penColorPicker.valueProperty());
-        // penCircle.setStroke(Color.BLACK);
-        // penCircle.setCenterX(e.getX());
-        // penCircle.setCenterY(e.getY());
+        multiLayerCanvas.setOnMousePressed(e ->
 
-        // imageView.paint((int) e.getX(), (int) e.getY(), (Color)
-        // imageView.getPen().getFill());
-        // }
-        // if (e.getButton().equals(MouseButton.SECONDARY)) {
-        // imageView.getScene().setCursor(Cursor.MOVE);
-        // imageView.setTranslateX(imageView.getTranslateX() + e.getX() -
-        // imageView.mouseX);
-        // imageView.setTranslateY(imageView.getTranslateY() + e.getY() -
-        // imageView.mouseY);
-        // }
-        // });
+        {
+            // imageView.mouseX = e.getX();
+            // imageView.mouseY = e.getY();
+            // imageView.penX = (int) e.getX();
+            // imageView.penY = (int) e.getY();
+            // });
 
-        // imageView.setOnMouseExited(e -> {
-        // imageView.getScene().setCursor(Cursor.DEFAULT);
-        // this.positionLabel.setText("(-, -)");
-        // this.colorRGBLabel.setText("(-, -, -)");
-        // this.colorHSBLabel.setText("(-, -, -)");
-        // this.colorBlock.setFill(Color.WHITE);
-        // });
+            // imageView.setOnMouseDragged(e -> {
+            // if (e.getButton().equals(MouseButton.PRIMARY)) {
+            // imageView.getScene().setCursor(Cursor.DISAPPEAR);
+            // Circle penCircle = new Circle();
+
+            // penCircle.radiusProperty().bind(penSizeSlider.valueProperty());
+            // penCircle.fillProperty().bind(penColorPicker.valueProperty());
+            // penCircle.setStroke(Color.BLACK);
+            // penCircle.setCenterX(e.getX());
+            // penCircle.setCenterY(e.getY());
+
+            // imageView.paint((int) e.getX(), (int) e.getY(), (Color)
+            // imageView.getPen().getFill());
+            // }
+            // if (e.getButton().equals(MouseButton.SECONDARY)) {
+            // imageView.getScene().setCursor(Cursor.MOVE);
+            // imageView.setTranslateX(imageView.getTranslateX() + e.getX() -
+            // imageView.mouseX);
+            // imageView.setTranslateY(imageView.getTranslateY() + e.getY() -
+            // imageView.mouseY);
+            // }
+        });
+
+        multiLayerCanvas.setOnMouseExited(e -> {
+            multiLayerCanvas.getScene().setCursor(Cursor.DEFAULT);
+            this.positionLabel.setText("(-, -)");
+            this.colorRGBLabel.setText("(-, -, -)");
+            this.colorHSBLabel.setText("(-, -, -)");
+            this.colorBlock.setFill(Color.WHITE);
+        });
 
         ScrollPane scrollPane = new ScrollPane(multiLayerCanvas);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
         Tab tab = new Tab(file.getName(), scrollPane);
 
@@ -382,6 +394,9 @@ public class ImageWindowController {
 
     @FXML
     void UndoMenuItemOnAction(ActionEvent event) {
+        MultiLayerCanvas currMLC = getCurreMultiLayerCanvas();
+        currMLC.undo();
+
         // Tab currentTab = imageTabPane.getSelectionModel().getSelectedItem();
         // Canvas currentCanvas = (Canvas) ((ScrollPane)
         // currentTab.getContent()).getContent();

@@ -1,5 +1,7 @@
 package src.operation;
 
+import src.controller.MultiLayerCanvas;
+
 public interface Operation {
-    // void apply(Canvas layer);
+    void apply(MultiLayerCanvas mlc, int index);
 }
