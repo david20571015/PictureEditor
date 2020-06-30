@@ -8,6 +8,9 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 
 public class ImageOperation implements Operation {
+    // @Override
+    // void apply(Canvas layer){};
+
     static protected Image conv2d(Image inputImage, double[][] mask) {
         WritableImage output = new WritableImage(inputImage.getPixelReader(), (int) inputImage.getWidth(),
                 (int) inputImage.getHeight());

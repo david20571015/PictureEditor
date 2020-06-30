@@ -14,12 +14,15 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Rectangle?>
 
-<VBox prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="src.resource.ImageWindowController">
+<VBox prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="src.controller.ImageWindowController">
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
@@ -47,7 +50,7 @@
         <TabPane fx:id="imageTabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" />
         <VBox prefWidth="466.0" SplitPane.resizableWithParent="false">
           <children>
-            <TitledPane animated="false" maxHeight="1.7976931348623157E308" text="Filter">
+            <TitledPane animated="false" expanded="false" maxHeight="1.7976931348623157E308" text="Filter">
               <content>
                 <AnchorPane maxHeight="1.7976931348623157E308">
                   <children>
@@ -62,7 +65,7 @@
                 </AnchorPane>
               </content>
             </TitledPane>
-            <TitledPane animated="false" maxHeight="1.7976931348623157E308" text="Pen">
+            <TitledPane animated="false" expanded="false" maxHeight="1.7976931348623157E308" text="Pen">
               <content>
                 <AnchorPane maxHeight="1.7976931348623157E308">
                            <children>
@@ -72,7 +75,7 @@
                            </children></AnchorPane>
               </content>
             </TitledPane>
-            <TitledPane animated="false" maxHeight="1.7976931348623157E308" text="Enhancement">
+            <TitledPane animated="false" expanded="false" maxHeight="1.7976931348623157E308" text="Enhancement">
                      <content>
                         <AnchorPane prefHeight="200.0" prefWidth="200.0">
                            <children>
@@ -87,6 +90,50 @@
                            </children>
                         </AnchorPane>
                      </content></TitledPane>
+                  <TitledPane text="Layer">
+                     <content>
+                        <VBox alignment="CENTER">
+                           <children>
+                              <GridPane fx:id="layersGridPane" alignment="CENTER" gridLinesVisible="true" onMouseClicked="#layersGridPaneOnMouseClicked">
+                                <columnConstraints>
+                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                </rowConstraints>
+                                 <children>
+                                    <Label contentDisplay="TOP" text="No." GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                       <opaqueInsets>
+                                          <Insets />
+                                       </opaqueInsets>
+                                       <GridPane.margin>
+                                          <Insets left="5.0" />
+                                       </GridPane.margin></Label>
+                                    <Label text="Thumbnail" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                       <GridPane.margin>
+                                          <Insets left="5.0" />
+                                       </GridPane.margin></Label>
+                                    <Label text="Visible" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                                       <GridPane.margin>
+                                          <Insets left="5.0" />
+                                       </GridPane.margin></Label>
+                                    <Label text="Delete" GridPane.columnIndex="3" GridPane.rowIndex="0">
+                                       <GridPane.margin>
+                                          <Insets left="5.0" />
+                                       </GridPane.margin></Label>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets bottom="10.0" left="-10.0" right="-10.0" top="-10.0" />
+                                 </VBox.margin>
+                              </GridPane>
+                              <Button fx:id="addNewLayerButtom" mnemonicParsing="false" onAction="#addNewLayerButtomOnAction" text="Add New Layer" textAlignment="CENTER" />
+                           </children>
+                        </VBox>
+                     </content>
+                  </TitledPane>
           </children>
         </VBox>
       </items>

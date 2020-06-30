@@ -1,6 +1,6 @@
 package src.window;
 
-import src.resource.ImageWindowController;
+import src.controller.ImageWindowController;
 
 import java.io.IOException;
 
