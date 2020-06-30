@@ -29,6 +29,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Line;
@@ -227,17 +228,24 @@ public class ImageWindowController {
                     Shape shape = (Shape) shapeToggleGroup.getSelectedToggle().getUserData();
                     shape.setStroke(penColorPicker.getValue());
                     shape.setStrokeWidth(penSizeSlider.getValue());
+                    shape.setFill(Color.TRANSPARENT);
                     multiLayerCanvas.shape = shape;
-
+                    multiLayerCanvas.getChildren().add(new Pane(multiLayerCanvas.shape));
                     if (shape instanceof Line) {
                         ((Line) multiLayerCanvas.shape).startXProperty().set(e.getX());
                         ((Line) multiLayerCanvas.shape).startYProperty().set(e.getY());
+                        ((Line) multiLayerCanvas.shape).endXProperty().set(e.getX());
+                        ((Line) multiLayerCanvas.shape).endYProperty().set(e.getY());
                     } else if (shape instanceof Rectangle) {
                         ((Rectangle) multiLayerCanvas.shape).xProperty().set(e.getX());
                         ((Rectangle) multiLayerCanvas.shape).yProperty().set(e.getY());
+                        ((Rectangle) multiLayerCanvas.shape).widthProperty().set(0);
+                        ((Rectangle) multiLayerCanvas.shape).heightProperty().set(0);
                     } else if (shape instanceof Ellipse) {
                         ((Ellipse) multiLayerCanvas.shape).centerXProperty().set(e.getX());
                         ((Ellipse) multiLayerCanvas.shape).centerYProperty().set(e.getY());
+                        ((Ellipse) multiLayerCanvas.shape).radiusXProperty().set(0);
+                        ((Ellipse) multiLayerCanvas.shape).radiusYProperty().set(0);
                     }
                 }
             }
@@ -256,15 +264,27 @@ public class ImageWindowController {
                         ((Line) multiLayerCanvas.shape).endXProperty().set(e.getX());
                         ((Line) multiLayerCanvas.shape).endYProperty().set(e.getY());
                     } else if (multiLayerCanvas.shape instanceof Rectangle) {
-                        ((Rectangle) multiLayerCanvas.shape).widthProperty()
-                                .set(e.getX() - multiLayerCanvas.getMouseClickedX());
-                        ((Rectangle) multiLayerCanvas.shape).heightProperty()
-                                .set(e.getY() - multiLayerCanvas.getMouseClickedY());
+                        double x = multiLayerCanvas.getMouseClickedX();
+                        double y = multiLayerCanvas.getMouseClickedY();
+                        double w = e.getX() - x;
+                        double h = e.getY() - y;
+                        if (w < 0) {
+                            x += w;
+                            w *= -1;
+                        }
+                        if (h < 0) {
+                            y += h;
+                            h *= -1;
+                        }
+                        ((Rectangle) multiLayerCanvas.shape).xProperty().set(x);
+                        ((Rectangle) multiLayerCanvas.shape).yProperty().set(y);
+                        ((Rectangle) multiLayerCanvas.shape).widthProperty().set(w);
+                        ((Rectangle) multiLayerCanvas.shape).heightProperty().set(h);
                     } else if (multiLayerCanvas.shape instanceof Ellipse) {
                         ((Ellipse) multiLayerCanvas.shape).radiusXProperty()
-                                .set(e.getX() - multiLayerCanvas.getMouseClickedX());
+                                .set(Math.abs(e.getX() - multiLayerCanvas.getMouseClickedX()));
                         ((Ellipse) multiLayerCanvas.shape).radiusYProperty()
-                                .set(e.getY() - multiLayerCanvas.getMouseClickedY());
+                                .set(Math.abs(e.getY() - multiLayerCanvas.getMouseClickedY()));
                     }
                 }
             }
@@ -318,8 +338,10 @@ public class ImageWindowController {
                         y += h;
                         h *= -1;
                     }
-                    gc.strokeOval(x, y, w, h);
+                    gc.strokeOval(x - w, y - h, w * 2, h * 2);
                 }
+                multiLayerCanvas.getChildren().remove(multiLayerCanvas.getChildren().size() - 1);
+                multiLayerCanvas.updateLayersDetail(layersGridPane);
             }
         });
 

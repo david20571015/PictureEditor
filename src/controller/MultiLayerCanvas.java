@@ -102,8 +102,6 @@ public class MultiLayerCanvas extends StackPane {
         ObservableList<Node> canvases = this.getChildren();
         this.currentSLC = (SingleLayerCanvas) (canvases.get(index));
         this.currentSLCIndex = index;
-
-        this.currentSLC.getGraphicsContext2D().fillRect(100, 100, 100, 100);
     }
 
     public SingleLayerCanvas getCurrentLayer() {
@@ -222,6 +220,8 @@ public class MultiLayerCanvas extends StackPane {
 
     public void undo() {
         if (!layerRecord.isEmpty()) {
+            System.out.println("MultiLayerCanvas.undo()");
+            System.out.println("layer num = " + layerRecord.size());
             SingleLayerCanvas lastSLC = layerRecord.remove(layerRecord.size() - 1);
             lastSLC.undo();
         }
@@ -245,35 +245,33 @@ public class MultiLayerCanvas extends StackPane {
             sp.setFill(Color.TRANSPARENT);
             snapshot(sp, shot);
             snapShotRecord.add(shot);
+            System.out.println(this.getClass());
             layerRecord.add(this);
 
             // System.out.println("MultiLayerCanvas.SingleLayerCanvas.addStep()");
             // System.out.println(snapShotRecord.size());
 
-            // BufferedImage bImage = SwingFXUtils.fromFXImage(shot, null);
-            // BufferedImage bbImage = new BufferedImage((int) shot.getWidth(), (int)
-            // shot.getHeight(),
-            // BufferedImage.TYPE_INT_RGB);
-            // Graphics2D g = bbImage.createGraphics();
-            // g.drawImage(bImage, 0, 0, null);
-            // g.dispose();
+            BufferedImage bImage = SwingFXUtils.fromFXImage(shot, null);
+            BufferedImage bbImage = new BufferedImage((int) shot.getWidth(), (int) shot.getHeight(),
+                    BufferedImage.TYPE_INT_RGB);
+            Graphics2D g = bbImage.createGraphics();
+            g.drawImage(bImage, 0, 0, null);
+            g.dispose();
 
-            // try {
-            // ImageIO.write(bbImage, "png",
-            // new File("C:\\Users\\david\\Desktop\\test" + snapShotRecord.size() +
-            // ".png"));
-            // } catch (IOException e) {
-            // System.out.println(e.getMessage());
-            // }
+            try {
+                ImageIO.write(bbImage, "png",
+                        new File("C:\\Users\\david\\Desktop\\test" + snapShotRecord.size() + ".png"));
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
+            }
         }
 
         public void undo() {
             if (!snapShotRecord.isEmpty()) {
+                System.out.println("MultiLayerCanvas.SingleLayerCanvas.undo()");
+                System.out.println("snapshot num = " + snapShotRecord.size());
                 Image lastImage = snapShotRecord.remove(snapShotRecord.size() - 1);
                 getGraphicsContext2D().drawImage(lastImage, 0, 0);
-
-                // System.out.println("MultiLayerCanvas.SingleLayerCanvas.undo()");
-                // System.out.println(snapShotRecord.size());
             }
         }
     }
