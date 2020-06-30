@@ -1,5 +1,6 @@
 package src.controller;
 
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -7,7 +8,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
-import javax.management.loading.MLet;
 
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -33,6 +33,7 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
+import src.operation.Filter;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 
@@ -114,10 +115,17 @@ public class ImageWindowController {
     @FXML
     void saveMenuItemOnAction(ActionEvent event) {
         Tab currentTab = imageTabPane.getSelectionModel().getSelectedItem();
-        Image currentImage = ((ImageView) ((ScrollPane) currentTab.getContent()).getContent()).getImage();
+        Image currentImage = getCurreMultiLayerCanvas().snapshot(null, null);
         File currentFile = new File(currentTab.getText());
+        System.out.println("ImageWindowController.saveMenuItemOnAction()");
+        System.out.println(currentImage.getHeight());
         currentFile = new File(currentFile.getName().split("\\.")[0]);
         BufferedImage bImage = SwingFXUtils.fromFXImage(currentImage, null);
+        BufferedImage bbImage = new BufferedImage((int) currentImage.getWidth(), (int) currentImage.getHeight(),
+                BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = bbImage.createGraphics();
+        g.drawImage(bImage, 0, 0, null);
+        g.dispose();
 
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Save Image File as");
@@ -128,12 +136,11 @@ public class ImageWindowController {
                 new FileChooser.ExtensionFilter("png", "*.png"), new FileChooser.ExtensionFilter("bmp", "*.bmp"));
 
         File savePath = fileChooser.showSaveDialog(null);
-
         String fileExtension = fileChooser.selectedExtensionFilterProperty().get().getDescription();
-
+        System.out.println(savePath + " " + fileExtension);
         if (savePath != null) {
             try {
-                ImageIO.write(bImage, fileExtension, savePath);
+                ImageIO.write(bbImage, fileExtension, savePath);
             } catch (IOException e) {
                 System.out.println(e.getMessage());
             }
@@ -167,8 +174,6 @@ public class ImageWindowController {
         cb.setDisable(true);
         layersGridPane.add(cb, 2, 1, 1, 1);
 
-        multiLayerCanvas.updateLayersDetail(layersGridPane);
-
         // imageView.setSmooth(true);
         // imageView.setPreserveRatio(true);
 
@@ -199,14 +204,6 @@ public class ImageWindowController {
                 multiLayerCanvas.setScaleY(multiLayerCanvas.getScaleY() + deltaY);
             }
             zoomLabel.setText(String.valueOf((int) (multiLayerCanvas.getScaleX() * 100)) + "% ");
-
-            // int deltaY = (int) e.getDeltaY();
-            // imageView.zoomFactor += deltaY * Canvas.ZOOM_RATE;
-            // imageView.zoomFactor = Math.max(0.01, Math.min(20.0, imageView.zoomFactor));
-            // imageView.setScaleX(imageView.zoomFactor);
-            // imageView.setScaleY(imageView.zoomFactor);
-            // this.zoomLabel.setText(String.valueOf((int) (imageView.zoomFactor * 100.)) +
-            // "% ");
         });
 
         multiLayerCanvas.setOnMouseEntered(e -> {
@@ -230,9 +227,7 @@ public class ImageWindowController {
             // imageView.getPen().setPosition(e.getX(), e.getY());
         });
 
-        multiLayerCanvas.setOnMousePressed(e ->
-
-        {
+        multiLayerCanvas.setOnMousePressed(e -> {
             // imageView.mouseX = e.getX();
             // imageView.mouseY = e.getY();
             // imageView.penX = (int) e.getX();
@@ -276,61 +271,49 @@ public class ImageWindowController {
 
         Tab tab = new Tab(file.getName(), scrollPane);
 
-        // tab.setOnSelectionChanged(e -> {
-        // this.sizeLabel.setText(
-        // (int) (imageView.getImage().getWidth()) + " x " + (int)
-        // (imageView.getImage().getHeight()));
-        // saturationSlider.valueProperty().unbind();
-        // brightnessSlider.valueProperty().unbind();
-        // hueSlider.valueProperty().unbind();
-        // contrastSlider.valueProperty().unbind();
+        tab.setOnSelectionChanged(e -> {
+            this.sizeLabel.setText((int) (multiLayerCanvas.getWidth()) + " x " + (int) (multiLayerCanvas.getHeight()));
+            multiLayerCanvas.updateLayersDetail(layersGridPane);
+            // saturationSlider.valueProperty().unbind();
+            // brightnessSlider.valueProperty().unbind();
+            // hueSlider.valueProperty().unbind();
+            // contrastSlider.valueProperty().unbind();
 
-        // imageView.setEffect(new ColorAdjust(0, 0, 0, 0));
-        // saturationSlider.setValue(((ColorAdjust)
-        // imageView.getEffect()).getSaturation());
-        // brightnessSlider.setValue(((ColorAdjust)
-        // imageView.getEffect()).getBrightness());
-        // hueSlider.setValue(((ColorAdjust) imageView.getEffect()).getHue());
-        // contrastSlider.setValue(((ColorAdjust) imageView.getEffect()).getContrast());
-        // });
+            // imageView.setEffect(new ColorAdjust(0, 0, 0, 0));
+            // saturationSlider.setValue(((ColorAdjust)
+            // imageView.getEffect()).getSaturation());
+            // brightnessSlider.setValue(((ColorAdjust)
+            // imageView.getEffect()).getBrightness());
+            // hueSlider.setValue(((ColorAdjust) imageView.getEffect()).getHue());
+            // contrastSlider.setValue(((ColorAdjust) imageView.getEffect()).getContrast());
+        });
 
         this.imageTabPane.getTabs().add(tab);
     }
 
     @FXML
     void filterButtonOnAction(ActionEvent event) {
-        // Tab currentTab = imageTabPane.getSelectionModel().getSelectedItem();
-        // Canvas currentCanvas = (Canvas) ((ScrollPane)
-        // currentTab.getContent()).getContent();
-        // Image newImage = null;
+        MultiLayerCanvas mlc = getCurreMultiLayerCanvas();
+        Filter filter = null;
 
-        // if (event.getSource() == meanBlur)
-        // newImage = Filter.computeFilter(currentCanvas.getImage(), Filter.MEAN_BLUR);
-        // else if (event.getSource() == gaussianBlur)
-        // newImage = Filter.computeFilter(currentCanvas.getImage(),
-        // Filter.GAUSSIAN_BLUR);
-        // else if (event.getSource() == sharpen)
-        // newImage = Filter.computeFilter(currentCanvas.getImage(), Filter.SHARPEN);
-        // else if (event.getSource() == relief)
-        // newImage = Filter.computeFilter(currentCanvas.getImage(), Filter.RELIEF);
-        // else if (event.getSource() == unsharpMasking)
-        // newImage = Filter.computeFilter(currentCanvas.getImage(),
-        // Filter.UNSHAPR_MASKING);
-        // else if (event.getSource() == negative)
-        // newImage = Filter.toNegative(currentCanvas.getImage());
-        // else if (event.getSource() == grayScale)
-        // newImage = Filter.toGrayScale(currentCanvas.getImage());
+        if (event.getSource() == meanBlur) {
+            filter = new Filter(new String("MeanBlur"), Filter.MEAN_BLUR, true);
+        } else if (event.getSource() == gaussianBlur) {
+            filter = new Filter(new String("GaussianBlur"), Filter.GAUSSIAN_BLUR, true);
+        } else if (event.getSource() == sharpen) {
+            filter = new Filter(new String("Sharpen"), Filter.SHARPEN, true);
+        } else if (event.getSource() == relief) {
+            filter = new Filter(new String("Relief"), Filter.RELIEF, true);
+        } else if (event.getSource() == unsharpMasking) {
+            filter = new Filter(new String("UnsharpMasking"), Filter.UNSHAPR_MASKING, true);
+        } else if (event.getSource() == negative) {
+            filter = new Filter(new String("Negative"), Filter.NULL_FILTER, false);
+        } else if (event.getSource() == grayScale) {
+            filter = new Filter(new String("GrayScale"), Filter.NULL_FILTER, false);
+        }
 
-        // while (currentCanvas.operationIter < currentCanvas.operations.size() - 1)
-        // currentCanvas.operations.remove(currentCanvas.operationIter + 1);
-
-        // currentCanvas.operations.add(newImage);
-        // currentCanvas.operationIter++;
-
-        // System.out.printf("add img, Operation.size() = %d, iter = %d\n",
-        // currentCanvas.operations.size(),
-        // currentCanvas.operationIter);
-        // currentCanvas.setImage(newImage);
+        filter.apply(mlc);
+        mlc.updateLayersDetail(layersGridPane);
     }
 
     @FXML
@@ -341,13 +324,11 @@ public class ImageWindowController {
             getCurreMultiLayerCanvas().setCurrrntLayer(index);
             getCurreMultiLayerCanvas().updateLayersDetail(layersGridPane);
         }
-
     }
 
     @FXML
     void addNewLayerButtomOnAction(ActionEvent event) {
-        Tab currentTab = imageTabPane.getSelectionModel().getSelectedItem();
-        MultiLayerCanvas currentCanvas = (MultiLayerCanvas) ((ScrollPane) currentTab.getContent()).getContent();
+        MultiLayerCanvas currentCanvas = getCurreMultiLayerCanvas();
         currentCanvas.addLayer();
 
         int newRowIndex = layersGridPane.getRowCount();
@@ -396,17 +377,7 @@ public class ImageWindowController {
     void UndoMenuItemOnAction(ActionEvent event) {
         MultiLayerCanvas currMLC = getCurreMultiLayerCanvas();
         currMLC.undo();
-
-        // Tab currentTab = imageTabPane.getSelectionModel().getSelectedItem();
-        // Canvas currentCanvas = (Canvas) ((ScrollPane)
-        // currentTab.getContent()).getContent();
-
-        // if (currentCanvas.operationIter > 0)
-        // currentCanvas.setImage(currentCanvas.operations.get(--currentCanvas.operationIter));
-
-        // System.out.printf("undo, Operation.size() = %d, iter = %d\n",
-        // currentCanvas.operations.size(),
-        // currentCanvas.operationIter);
+        currMLC.updateLayersDetail(layersGridPane);
     }
 
     @FXML
@@ -425,5 +396,15 @@ public class ImageWindowController {
 
     public void closeStage() {
         this.imageTabPane.getTabs().clear();
+
+        Set<Node> deleteNodes = new HashSet<>();
+        for (Node node : layersGridPane.getChildren()) {
+            Integer row = GridPane.getRowIndex(node);
+            row = (row == null ? 0 : row);
+            if (row > 0) {
+                deleteNodes.add(node);
+            }
+        }
+        layersGridPane.getChildren().removeAll(deleteNodes);
     }
 }

@@ -1,18 +1,25 @@
 package src.controller;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 
 public class MultiLayerCanvas extends StackPane {
     private ArrayList<SingleLayerCanvas> layerRecord = new ArrayList<SingleLayerCanvas>();
@@ -51,7 +58,6 @@ public class MultiLayerCanvas extends StackPane {
         this.currentSLCIndex = index;
 
         this.currentSLC.getGraphicsContext2D().fillRect(100, 100, 100, 100);
-        System.out.println("set current layer " + index);
     }
 
     public SingleLayerCanvas getCurrentLayer() {
@@ -61,6 +67,65 @@ public class MultiLayerCanvas extends StackPane {
     public void updateLayersDetail(GridPane layersGridPane) {
         ObservableList<Node> childrens = layersGridPane.getChildren();
         ObservableList<Node> canvases = this.getChildren();
+
+        if (canvases.size() < layersGridPane.getRowCount() - 1) {
+            Integer rowIndex = canvases.size();
+            rowIndex = (rowIndex == null ? 0 : rowIndex);
+            Set<Node> deleteNodes = new HashSet<>();
+            for (Node node : layersGridPane.getChildren()) {
+                Integer row = GridPane.getRowIndex(node);
+                row = (row == null ? 0 : row);
+                if (row > rowIndex) {
+                    deleteNodes.add(node);
+                } else if (row == rowIndex) {
+                }
+            }
+            layersGridPane.getChildren().removeAll(deleteNodes);
+        } else if (canvases.size() > layersGridPane.getRowCount() - 1) {
+            Integer rowNum = canvases.size() - layersGridPane.getRowCount() + 1;
+            for (int i = 0; i < rowNum; i++) {
+                int newRowIndex = layersGridPane.getRowCount();
+
+                ColumnConstraints column = new ColumnConstraints();
+                layersGridPane.getColumnConstraints().add(column);
+
+                Label label = new Label(String.valueOf(newRowIndex - 1));
+                label.setPadding(new Insets(5, 5, 5, 5));
+                layersGridPane.add(label, 0, newRowIndex, 1, 1);
+                layersGridPane.add(new ImageView(), 1, newRowIndex, 1, 1);
+
+                CheckBox cb = new CheckBox();
+                cb.setOnAction(e -> this.setLayerVisible(GridPane.getRowIndex(cb), cb.isSelected()));
+                layersGridPane.add(cb, 2, newRowIndex, 1, 1);
+
+                Button deletebuButton = new Button("delete");
+                layersGridPane.add(deletebuButton, 3, newRowIndex, 1, 1);
+                deletebuButton.setOnAction(e -> {
+                    Integer rowIndex = GridPane.getRowIndex(deletebuButton);
+                    rowIndex = (rowIndex == null ? 0 : rowIndex);
+
+                    this.deleteLayer(rowIndex);
+
+                    Set<Node> deleteNodes = new HashSet<>();
+                    for (Node node : layersGridPane.getChildren()) {
+                        Integer row = GridPane.getRowIndex(node);
+                        row = (row == null ? 0 : row);
+                        if (row > rowIndex) {
+                            if (GridPane.getColumnIndex(node) == 0 || GridPane.getColumnIndex(node) == null) {
+                                ((Label) node).setText(String.valueOf(row - 2));
+                            }
+                            GridPane.setRowIndex(node, row - 1);
+                        } else if (row == rowIndex) {
+                            deleteNodes.add(node);
+                        }
+                    }
+                    layersGridPane.getChildren().removeAll(deleteNodes);
+
+                    this.updateLayersDetail(layersGridPane);
+                });
+            }
+        }
+
         for (Node node : childrens) {
             if (node instanceof Group)
                 continue;
@@ -82,6 +147,7 @@ public class MultiLayerCanvas extends StackPane {
                 iv.setPreserveRatio(true);
                 iv.setSmooth(true);
                 iv.setCache(true);
+
                 iv.setImage(((SingleLayerCanvas) canvases.get(rowIndex)).snapshot(null, null));
                 iv.setFitWidth(50);
             }
@@ -109,8 +175,10 @@ public class MultiLayerCanvas extends StackPane {
     }
 
     public void undo() {
-        SingleLayerCanvas lastSLC = layerRecord.remove(layerRecord.size() - 1);
-        lastSLC.undo();
+        if (!layerRecord.isEmpty()) {
+            SingleLayerCanvas lastSLC = layerRecord.remove(layerRecord.size() - 1);
+            lastSLC.undo();
+        }
     }
 
     public class SingleLayerCanvas extends Canvas {
@@ -120,6 +188,7 @@ public class MultiLayerCanvas extends StackPane {
         public SingleLayerCanvas(int width, int height, int testIndex) {
             super(width, height);
             super.getGraphicsContext2D().fillText(String.valueOf(testIndex), testIndex * 50, testIndex * 50);
+
         }
         // test
 
@@ -134,14 +203,18 @@ public class MultiLayerCanvas extends StackPane {
 
         public void addStep() {
             WritableImage shot = new WritableImage((int) (getWidth()), (int) (getHeight()));
-            snapshot(null, shot);
+            SnapshotParameters sp = new SnapshotParameters();
+            sp.setFill(Color.TRANSPARENT);
+            snapshot(sp, shot);
             snapShotRecord.add(shot);
             layerRecord.add(this);
         }
 
         public void undo() {
-            Image lastImage = snapShotRecord.remove(snapShotRecord.size() - 1);
-            getGraphicsContext2D().drawImage(lastImage, 0, 0);
+            if (!snapShotRecord.isEmpty()) {
+                Image lastImage = snapShotRecord.remove(snapShotRecord.size() - 1);
+                getGraphicsContext2D().drawImage(lastImage, 0, 0);
+            }
         }
     }
 }

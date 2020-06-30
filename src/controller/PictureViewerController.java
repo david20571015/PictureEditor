@@ -109,7 +109,7 @@ public class PictureViewerController {
             BufferedReader reader = new BufferedReader(new FileReader(".//src//resource//favorite.txt"));
             String favoritepath = reader.readLine();
             while (favoritepath != null) {
-                System.out.println("reading");
+                // System.out.println("reading");
                 File f = new File(favoritepath);
                 if (f.exists()) {
                     favoriteTreeView.getRoot().getChildren().add(new TreeItem<File>(f));
@@ -130,7 +130,7 @@ public class PictureViewerController {
     }
 
     public void record() {
-        System.out.println("recording");
+        // System.out.println("recording");
         try {
             writer = new FileWriter(".//src//resource//favorite.txt");
             if (!favoriteTreeView.getRoot().getChildren().isEmpty()) {
@@ -191,11 +191,11 @@ public class PictureViewerController {
 
     @FXML
     void aboutMenuItemOnAction(final ActionEvent event) {
-        try{
-            URL srcLink=new URL("https://github.com/david20571015/java_final_project");
+        try {
+            URL srcLink = new URL("https://github.com/david20571015/java_final_project");
             Desktop.getDesktop().browse(srcLink.toURI());
+        } catch (Exception e) {
         }
-        catch(Exception e){}
     }
 
     private void showFavoriteBox(MouseEvent e, TreeItem<File> folderPath) {
@@ -255,7 +255,7 @@ public class PictureViewerController {
         }
     }
 
-    String[] pictureformat = { ".bmp", ".png", ".gif", ".jpeg", ".jpg" };
+    String[] pictureformat = { ".bmp", ".png", ".jpeg", ".jpg" };
 
     private void addImageIntoFolder(File path) {
         imageFlowPane.getChildren().clear();
@@ -263,7 +263,6 @@ public class PictureViewerController {
         File[] images = path.listFiles(File::isFile);
         double fileCounter = 1;
         for (File image : images) {
-            // System.out.println(image.);
             Boolean ispictureformat = false;
             for (String s : pictureformat) {
                 if (image.toString().substring(image.toString().length() - s.length()).toLowerCase().equals(s))

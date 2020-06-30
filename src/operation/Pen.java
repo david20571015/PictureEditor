@@ -1,4 +1,4 @@
-package src.operation.imageoperation;
+package src.operation;
 
 import javafx.scene.shape.Circle;
 
