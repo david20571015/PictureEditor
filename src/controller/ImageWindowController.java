@@ -16,12 +16,13 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.ProgressBar;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
@@ -29,12 +30,17 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Ellipse;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
 import src.operation.Filter;
+import src.operation.Pen;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 
@@ -70,17 +76,19 @@ public class ImageWindowController {
     @FXML
     private ColorPicker penColorPicker;
     @FXML
+    private CheckBox paintingCheckBox;
+    @FXML
     private Slider penSizeSlider;
     @FXML
     private TextField penSizeTextField;
     @FXML
-    private Slider saturationSlider;
+    private ToggleGroup shapeToggleGroup;
     @FXML
-    private Slider brightnessSlider;
+    private RadioButton lineRadioButton;
     @FXML
-    private Slider hueSlider;
+    private RadioButton rectangleRadioButton;
     @FXML
-    private Slider contrastSlider;
+    private RadioButton ellipseRadioButton;
     @FXML
     private GridPane layersGridPane;
     @FXML
@@ -93,13 +101,13 @@ public class ImageWindowController {
     private Label colorHSBLabel;
     @FXML
     private Rectangle colorBlock;
-    @FXML
-    private Label rightStatusLabel;
-    @FXML
-    private ProgressBar progressBar;
 
     @FXML
     void initialize() {
+        lineRadioButton.setUserData(new Line());
+        rectangleRadioButton.setUserData(new Rectangle());
+        ellipseRadioButton.setUserData(new Ellipse());
+
         penSizeTextField.textProperty().bindBidirectional(penSizeSlider.valueProperty(), new StringConverter<Number>() {
             @Override
             public String toString(Number t) {
@@ -172,28 +180,6 @@ public class ImageWindowController {
         cb.setDisable(true);
         layersGridPane.add(cb, 2, 1, 1, 1);
 
-        // imageView.setSmooth(true);
-        // imageView.setPreserveRatio(true);
-
-        // imageView.getPen().fillProperty().bind(penColorPicker.valueProperty());
-        // imageView.getPen().radiusProperty().bind(penSizeSlider.valueProperty());
-        // imageView.getPen().setVisible(true);
-
-        // ColorAdjust colorAdjust = new ColorAdjust();
-        // colorAdjust.saturationProperty().bind(saturationSlider.valueProperty());
-        // colorAdjust.brightnessProperty().bind(brightnessSlider.valueProperty());
-        // colorAdjust.hueProperty().bind(hueSlider.valueProperty());
-        // colorAdjust.contrastProperty().bind(contrastSlider.valueProperty());
-
-        // saturationSlider.valueProperty().addListener((v, ov, nv) ->
-        // imageView.setEffect(colorAdjust));
-        // brightnessSlider.valueProperty().addListener((v, ov, nv) ->
-        // imageView.setEffect(colorAdjust));
-        // hueSlider.valueProperty().addListener((v, ov, nv) ->
-        // imageView.setEffect(colorAdjust));
-        // contrastSlider.valueProperty().addListener((v, ov, nv) ->
-        // imageView.setEffect(colorAdjust));
-
         multiLayerCanvas.setOnScroll(e -> {
             double deltaY = e.getDeltaY();
             deltaY = (deltaY > 0 ? 0.1 : -0.1);
@@ -209,56 +195,132 @@ public class ImageWindowController {
         });
 
         multiLayerCanvas.setOnMouseMoved(e -> {
+            multiLayerCanvas.getScene().setCursor(Cursor.CROSSHAIR);
             int xPos = (int) (e.getX() * multiLayerCanvas.getScaleX());
             int yPos = (int) (e.getY() * multiLayerCanvas.getScaleY());
 
             positionLabel.setText("(" + xPos + ", " + yPos + ")");
 
-            Color color = multiLayerCanvas.snapshot(null, null).getPixelReader().getColor(xPos, yPos);
-            colorRGBLabel.setText("(" + (int) (color.getRed() * 256) + ", " + (int) (color.getGreen() * 256) + ", "
-                    + (int) (color.getBlue() * 256) + ") ");
-            colorHSBLabel.setText(
-                    "(" + String.format("%.3f", color.getHue()) + ", " + String.format("%.3f", color.getSaturation())
-                            + ", " + String.format("%.3f", color.getBrightness()) + ") ");
-            colorBlock.setFill(color);
-
-            // imageView.getPen().setPosition(e.getX(), e.getY());
+            try {
+                Color color = multiLayerCanvas.snapshot(null, null).getPixelReader().getColor(xPos, yPos);
+                colorRGBLabel.setText("(" + (int) (color.getRed() * 256) + ", " + (int) (color.getGreen() * 256) + ", "
+                        + (int) (color.getBlue() * 256) + ") ");
+                colorHSBLabel.setText("(" + String.format("%.3f", color.getHue()) + ", "
+                        + String.format("%.3f", color.getSaturation()) + ", "
+                        + String.format("%.3f", color.getBrightness()) + ") ");
+                colorBlock.setFill(color);
+            } catch (IndexOutOfBoundsException ex) {
+            }
         });
 
         multiLayerCanvas.setOnMousePressed(e -> {
-            // imageView.mouseX = e.getX();
-            // imageView.mouseY = e.getY();
-            // imageView.penX = (int) e.getX();
-            // imageView.penY = (int) e.getY();
+            multiLayerCanvas.setMouseClickedPos(e.getX(), e.getY());
+
+            if (e.getButton().equals(MouseButton.PRIMARY)) {
+                multiLayerCanvas.pen = new Pen(penColorPicker.getValue(), penSizeSlider.getValue());
+                multiLayerCanvas.getCurrentLayer().getGraphicsContext2D().setLineWidth(penSizeSlider.getValue());
+                multiLayerCanvas.getCurrentLayer().getGraphicsContext2D().setStroke(penColorPicker.getValue());
+                multiLayerCanvas.setMouseLastPos(e.getX(), e.getY());
+                multiLayerCanvas.pen.apply(multiLayerCanvas);
+
+                if (!paintingCheckBox.isSelected()) {
+                    Shape shape = (Shape) shapeToggleGroup.getSelectedToggle().getUserData();
+                    shape.setStroke(penColorPicker.getValue());
+                    shape.setStrokeWidth(penSizeSlider.getValue());
+                    multiLayerCanvas.shape = shape;
+
+                    if (shape instanceof Line) {
+                        ((Line) multiLayerCanvas.shape).startXProperty().set(e.getX());
+                        ((Line) multiLayerCanvas.shape).startYProperty().set(e.getY());
+                    } else if (shape instanceof Rectangle) {
+                        ((Rectangle) multiLayerCanvas.shape).xProperty().set(e.getX());
+                        ((Rectangle) multiLayerCanvas.shape).yProperty().set(e.getY());
+                    } else if (shape instanceof Ellipse) {
+                        ((Ellipse) multiLayerCanvas.shape).centerXProperty().set(e.getX());
+                        ((Ellipse) multiLayerCanvas.shape).centerYProperty().set(e.getY());
+                    }
+                }
+            }
+
         });
 
         multiLayerCanvas.setOnMouseDragged(e -> {
-            // if (e.getButton().equals(MouseButton.PRIMARY)) {
-            // imageView.getScene().setCursor(Cursor.DISAPPEAR);
-            // Circle penCircle = new Circle();
+            if (e.getButton().equals(MouseButton.PRIMARY)) {
+                if (paintingCheckBox.isSelected()) {
+                    GraphicsContext gc = multiLayerCanvas.getCurrentLayer().getGraphicsContext2D();
+                    gc.strokeLine(multiLayerCanvas.getMouseLastX(), multiLayerCanvas.getMouseLastY(), e.getX(),
+                            e.getY());
+                    multiLayerCanvas.setMouseLastPos(e.getX(), e.getY());
+                } else {
+                    if (multiLayerCanvas.shape instanceof Line) {
+                        ((Line) multiLayerCanvas.shape).endXProperty().set(e.getX());
+                        ((Line) multiLayerCanvas.shape).endYProperty().set(e.getY());
+                    } else if (multiLayerCanvas.shape instanceof Rectangle) {
+                        ((Rectangle) multiLayerCanvas.shape).widthProperty()
+                                .set(e.getX() - multiLayerCanvas.getMouseClickedX());
+                        ((Rectangle) multiLayerCanvas.shape).heightProperty()
+                                .set(e.getY() - multiLayerCanvas.getMouseClickedY());
+                    } else if (multiLayerCanvas.shape instanceof Ellipse) {
+                        ((Ellipse) multiLayerCanvas.shape).radiusXProperty()
+                                .set(e.getX() - multiLayerCanvas.getMouseClickedX());
+                        ((Ellipse) multiLayerCanvas.shape).radiusYProperty()
+                                .set(e.getY() - multiLayerCanvas.getMouseClickedY());
+                    }
+                }
+            }
 
-            // penCircle.radiusProperty().bind(penSizeSlider.valueProperty());
-            // penCircle.fillProperty().bind(penColorPicker.valueProperty());
-            // penCircle.setStroke(Color.BLACK);
-            // penCircle.setCenterX(e.getX());
-            // penCircle.setCenterY(e.getY());
+            if (e.getButton().equals(MouseButton.SECONDARY)) {
+                multiLayerCanvas.getScene().setCursor(Cursor.MOVE);
+                double scale = multiLayerCanvas.getScaleX();
 
-            // imageView.paint((int) e.getX(), (int) e.getY(), (Color)
-            // imageView.getPen().getFill());
-            // }
+                // FIX !!!
+                // Canvas move unideally when scale < 1 .
+                multiLayerCanvas.setTranslateX(
+                        multiLayerCanvas.getTranslateX() + e.getX() - multiLayerCanvas.getMouseClickedX());
+                multiLayerCanvas.setTranslateY(
+                        multiLayerCanvas.getTranslateY() + e.getY() - multiLayerCanvas.getMouseClickedY());
+            }
+        });
 
-            // if (e.getButton().equals(MouseButton.SECONDARY)) {
-            // multiLayerCanvas.getScene().setCursor(Cursor.MOVE);
-            // multiLayerCanvas.setTranslateX(multiLayerCanvas.getTranslateX() + e.getX());
-            // multiLayerCanvas.setTranslateY(multiLayerCanvas.getTranslateY() + e.getY());
+        multiLayerCanvas.setOnMouseReleased(e -> {
+            if (!paintingCheckBox.isSelected()) {
+                GraphicsContext gc = multiLayerCanvas.getCurrentLayer().getGraphicsContext2D();
 
-            // // multiLayerCanvas.setTranslateX(multiLayerCanvas.getTranslateX() + e.getX()
-            // -
-            // // multiLayerCanvas.mouseX);
-            // // multiLayerCanvas.setTranslateY(multiLayerCanvas.getTranslateY() + e.getY()
-            // -
-            // // multiLayerCanvas.mouseY);
-            // }
+                if (multiLayerCanvas.shape instanceof Line) {
+                    gc.strokeLine(((Line) multiLayerCanvas.shape).startXProperty().get(),
+                            ((Line) multiLayerCanvas.shape).startYProperty().get(),
+                            ((Line) multiLayerCanvas.shape).endXProperty().get(),
+                            ((Line) multiLayerCanvas.shape).endYProperty().get());
+                } else if (multiLayerCanvas.shape instanceof Rectangle) {
+                    double x = ((Rectangle) multiLayerCanvas.shape).xProperty().get();
+                    double y = ((Rectangle) multiLayerCanvas.shape).yProperty().get();
+                    double w = ((Rectangle) multiLayerCanvas.shape).widthProperty().get();
+                    double h = ((Rectangle) multiLayerCanvas.shape).heightProperty().get();
+                    if (w < 0) {
+                        x += w;
+                        w *= -1;
+                    }
+                    if (h < 0) {
+                        y += h;
+                        h *= -1;
+                    }
+                    gc.strokeRect(x, y, w, h);
+                } else if (multiLayerCanvas.shape instanceof Ellipse) {
+                    double x = ((Ellipse) multiLayerCanvas.shape).centerXProperty().get();
+                    double y = ((Ellipse) multiLayerCanvas.shape).centerYProperty().get();
+                    double w = ((Ellipse) multiLayerCanvas.shape).radiusXProperty().get();
+                    double h = ((Ellipse) multiLayerCanvas.shape).radiusYProperty().get();
+                    if (w < 0) {
+                        x += w;
+                        w *= -1;
+                    }
+                    if (h < 0) {
+                        y += h;
+                        h *= -1;
+                    }
+                    gc.strokeOval(x, y, w, h);
+                }
+            }
         });
 
         multiLayerCanvas.setOnMouseExited(e -> {
@@ -279,18 +341,6 @@ public class ImageWindowController {
             this.sizeLabel.setText(
                     (int) (multiLayerCanvas.getImageWidth()) + " x " + (int) (multiLayerCanvas.getImageHeight()));
             multiLayerCanvas.updateLayersDetail(layersGridPane);
-            // saturationSlider.valueProperty().unbind();
-            // brightnessSlider.valueProperty().unbind();
-            // hueSlider.valueProperty().unbind();
-            // contrastSlider.valueProperty().unbind();
-
-            // imageView.setEffect(new ColorAdjust(0, 0, 0, 0));
-            // saturationSlider.setValue(((ColorAdjust)
-            // imageView.getEffect()).getSaturation());
-            // brightnessSlider.setValue(((ColorAdjust)
-            // imageView.getEffect()).getBrightness());
-            // hueSlider.setValue(((ColorAdjust) imageView.getEffect()).getHue());
-            // contrastSlider.setValue(((ColorAdjust) imageView.getEffect()).getContrast());
         });
 
         this.imageTabPane.getTabs().add(tab);
@@ -387,16 +437,6 @@ public class ImageWindowController {
 
     @FXML
     void RedoMenuItemOnAction(ActionEvent event) {
-        // Tab currentTab = imageTabPane.getSelectionModel().getSelectedItem();
-        // Canvas currentCanvas = (Canvas) ((ScrollPane)
-        // currentTab.getContent()).getContent();
-
-        // if (currentCanvas.operationIter < currentCanvas.operations.size() - 1)
-        // currentCanvas.setImage(currentCanvas.operations.get(++currentCanvas.operationIter));
-
-        // System.out.printf("redo, Operation.size() = %d, iter = %d\n",
-        // currentCanvas.operations.size(),
-        // currentCanvas.operationIter);
     }
 
     public void closeStage() {

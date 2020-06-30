@@ -156,7 +156,7 @@ public class Filter implements Operation {
 					g = Math.max(0, Math.min(g, 1.));
 					b = Math.max(0, Math.min(b, 1.));
 
-					pw.setColor(i, j , new Color(r, g, b, 1.0));
+					pw.setColor(i, j, new Color(r, g, b, 1.0));
 				} else {
 					pw.setColor(i, j, Color.TRANSPARENT);
 				}

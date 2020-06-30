@@ -20,11 +20,27 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Shape;
+import src.operation.Pen;
+import javafx.embed.swing.SwingFXUtils;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+import javax.imageio.ImageIO;
 
 public class MultiLayerCanvas extends StackPane {
+    public Pen pen = null;
+    public Shape shape = null;
     private ArrayList<SingleLayerCanvas> layerRecord = new ArrayList<SingleLayerCanvas>();
     private int imgWidth;
     private int imgHeight;
+    private double mouseClickedX;
+    private double mouseClickedY;
+    private double mouseLastX;
+    private double mouseLastY;
     private SingleLayerCanvas currentSLC;
     private int currentSLCIndex;
 
@@ -43,6 +59,32 @@ public class MultiLayerCanvas extends StackPane {
 
     public int getImageHeight() {
         return imgHeight;
+    }
+
+    public void setMouseClickedPos(double x, double y) {
+        this.mouseClickedX = x;
+        this.mouseClickedY = y;
+    }
+
+    public double getMouseClickedX() {
+        return mouseClickedX;
+    }
+
+    public double getMouseClickedY() {
+        return mouseClickedY;
+    }
+
+    public void setMouseLastPos(double x, double y) {
+        this.mouseLastX = x;
+        this.mouseLastY = y;
+    }
+
+    public double getMouseLastX() {
+        return mouseLastX;
+    }
+
+    public double getMouseLastY() {
+        return mouseLastY;
     }
 
     public void addLayer() {
@@ -204,12 +246,34 @@ public class MultiLayerCanvas extends StackPane {
             snapshot(sp, shot);
             snapShotRecord.add(shot);
             layerRecord.add(this);
+
+            // System.out.println("MultiLayerCanvas.SingleLayerCanvas.addStep()");
+            // System.out.println(snapShotRecord.size());
+
+            // BufferedImage bImage = SwingFXUtils.fromFXImage(shot, null);
+            // BufferedImage bbImage = new BufferedImage((int) shot.getWidth(), (int)
+            // shot.getHeight(),
+            // BufferedImage.TYPE_INT_RGB);
+            // Graphics2D g = bbImage.createGraphics();
+            // g.drawImage(bImage, 0, 0, null);
+            // g.dispose();
+
+            // try {
+            // ImageIO.write(bbImage, "png",
+            // new File("C:\\Users\\david\\Desktop\\test" + snapShotRecord.size() +
+            // ".png"));
+            // } catch (IOException e) {
+            // System.out.println(e.getMessage());
+            // }
         }
 
         public void undo() {
             if (!snapShotRecord.isEmpty()) {
                 Image lastImage = snapShotRecord.remove(snapShotRecord.size() - 1);
                 getGraphicsContext2D().drawImage(lastImage, 0, 0);
+
+                // System.out.println("MultiLayerCanvas.SingleLayerCanvas.undo()");
+                // System.out.println(snapShotRecord.size());
             }
         }
     }
