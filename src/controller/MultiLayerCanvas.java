@@ -254,7 +254,8 @@ public class MultiLayerCanvas extends StackPane {
             snapShotRecord.add(shot);
             layerRecord.add(num);
 
-            System.out.println("add step  size : " + layerRecord.size() + " index : " + num);
+            // System.out.println("add step size : " + layerRecord.size() + " index : " +
+            // num);
 
             // BufferedImage bImage = SwingFXUtils.fromFXImage(shot, null);
             // BufferedImage bbImage = new BufferedImage((int) shot.getWidth(), (int)
@@ -278,20 +279,22 @@ public class MultiLayerCanvas extends StackPane {
                 // System.out.println("MultiLayerCanvas.SingleLayerCanvas.undo()");
                 // System.out.println("snapshot num = " + snapShotRecord.size());
                 Image lastImage = snapShotRecord.remove(snapShotRecord.size() - 1);
-                BufferedImage bImage = SwingFXUtils.fromFXImage(lastImage, null);
-                BufferedImage bbImage = new BufferedImage((int) lastImage.getWidth(), (int) lastImage.getHeight(),
-                        BufferedImage.TYPE_INT_RGB);
-                Graphics2D g = bbImage.createGraphics();
-                g.drawImage(bImage, 0, 0, null);
-                g.dispose();
+                // BufferedImage bImage = SwingFXUtils.fromFXImage(lastImage, null);
+                // BufferedImage bbImage = new BufferedImage((int) lastImage.getWidth(), (int)
+                // lastImage.getHeight(),
+                // BufferedImage.TYPE_INT_RGB);
+                // Graphics2D g = bbImage.createGraphics();
+                // g.drawImage(bImage, 0, 0, null);
+                // g.dispose();
 
-                try {
-                    ImageIO.write(bbImage, "png",
-                            new File("C:\\Users\\david\\Desktop\\test" + num + "-" + snapShotRecord.size() + ".png"));
-                } catch (IOException e) {
-                    System.out.println(e.getMessage());
-                }
-                System.out.println("undo index : " + num);
+                // try {
+                // ImageIO.write(bbImage, "png",
+                // new File("C:\\Users\\david\\Desktop\\test" + num + "-" +
+                // snapShotRecord.size() + ".png"));
+                // } catch (IOException e) {
+                // System.out.println(e.getMessage());
+                // }
+                // System.out.println("undo index : " + num);
                 getGraphicsContext2D().drawImage(lastImage, 0, 0);
             }
         }

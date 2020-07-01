@@ -47,13 +47,9 @@ import javafx.event.ActionEvent;
 
 public class ImageWindowController {
     @FXML
-    private MenuItem openMenuItem;
-    @FXML
     private MenuItem saveMenuItem;
     @FXML
     private MenuItem undoMenuItem;
-    @FXML
-    private MenuItem redoMenuItem;
     @FXML
     private TabPane imageTabPane;
     @FXML
@@ -456,10 +452,6 @@ public class ImageWindowController {
         MultiLayerCanvas currMLC = getCurreMultiLayerCanvas();
         currMLC.undo();
         currMLC.updateLayersDetail(layersGridPane);
-    }
-
-    @FXML
-    void RedoMenuItemOnAction(ActionEvent event) {
     }
 
     public void closeStage() {
