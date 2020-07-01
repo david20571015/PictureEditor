@@ -340,7 +340,8 @@ public class ImageWindowController {
                     }
                     gc.strokeOval(x - w, y - h, w * 2, h * 2);
                 }
-                multiLayerCanvas.getChildren().remove(multiLayerCanvas.getChildren().size() - 1);
+                if (multiLayerCanvas.getChildren().get(multiLayerCanvas.getChildren().size() - 1) instanceof Pane)
+                    multiLayerCanvas.getChildren().remove(multiLayerCanvas.getChildren().size() - 1);
                 multiLayerCanvas.updateLayersDetail(layersGridPane);
             }
         });

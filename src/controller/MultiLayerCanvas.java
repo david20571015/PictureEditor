@@ -18,6 +18,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
@@ -27,14 +28,12 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
 import javax.imageio.ImageIO;
 
 public class MultiLayerCanvas extends StackPane {
     public Pen pen = null;
     public Shape shape = null;
-    private ArrayList<SingleLayerCanvas> layerRecord = new ArrayList<SingleLayerCanvas>();
+    private ArrayList<Integer> layerRecord = new ArrayList<Integer>();
     private int imgWidth;
     private int imgHeight;
     private double mouseClickedX;
@@ -43,11 +42,13 @@ public class MultiLayerCanvas extends StackPane {
     private double mouseLastY;
     private SingleLayerCanvas currentSLC;
     private int currentSLCIndex;
+    private Integer slcNum = 1;
 
     public MultiLayerCanvas(Image img) {
         imgWidth = (int) img.getWidth();
         imgHeight = (int) img.getHeight();
         SingleLayerCanvas baseLayer = new SingleLayerCanvas(imgWidth, imgHeight, img);
+        baseLayer.num = 0;
         currentSLC = baseLayer;
         currentSLCIndex = 0;
         getChildren().add(baseLayer);
@@ -89,13 +90,8 @@ public class MultiLayerCanvas extends StackPane {
 
     public void addLayer() {
         SingleLayerCanvas subLayer = new SingleLayerCanvas(imgWidth, imgHeight);
+        subLayer.num = slcNum++;
         getChildren().add(subLayer);
-    }
-
-    public SingleLayerCanvas getLayer(int index) {
-        if (index > 0 && index < layerRecord.size())
-            return layerRecord.get(index);
-        return null;
     }
 
     public void setCurrrntLayer(int index) {
@@ -211,24 +207,35 @@ public class MultiLayerCanvas extends StackPane {
     public void deleteLayer(int index) {
         ObservableList<Node> canvases = this.getChildren();
         SingleLayerCanvas deletedLayer = (SingleLayerCanvas) canvases.get(index - 1);
+        int deleteInteger = deletedLayer.num;
 
         this.getChildren().remove(deletedLayer);
-        for (SingleLayerCanvas canvas : layerRecord)
-            if (canvas.equals(deletedLayer))
-                layerRecord.remove(canvas);
+
+        for (int i = 0; i < layerRecord.size() - 1; i++)
+            if (layerRecord.get(i).intValue() == deleteInteger)
+                layerRecord.remove(i--);
     }
 
     public void undo() {
         if (!layerRecord.isEmpty()) {
-            System.out.println("MultiLayerCanvas.undo()");
-            System.out.println("layer num = " + layerRecord.size());
-            SingleLayerCanvas lastSLC = layerRecord.remove(layerRecord.size() - 1);
-            lastSLC.undo();
+            // System.out.println("MultiLayerCanvas.undo()");
+            // System.out.println("layer num = " + layerRecord.size() + " " +
+            // layerRecord.get(layerRecord.size() - 1));
+            int lastSLCnum = layerRecord.remove(layerRecord.size() - 1).intValue();
+            for (int i = 0; i < getChildren().size(); i++) {
+                SingleLayerCanvas slc = (SingleLayerCanvas) getChildren().get(i);
+                if (slc.num == lastSLCnum) {
+                    slc.undo();
+                    break;
+                }
+            }
         }
     }
 
     public class SingleLayerCanvas extends Canvas {
         ArrayList<Image> snapShotRecord = new ArrayList<Image>();
+
+        public int num;
 
         public SingleLayerCanvas(int width, int height) {
             super(width, height);
@@ -245,32 +252,46 @@ public class MultiLayerCanvas extends StackPane {
             sp.setFill(Color.TRANSPARENT);
             snapshot(sp, shot);
             snapShotRecord.add(shot);
-            System.out.println(this.getClass());
-            layerRecord.add(this);
+            layerRecord.add(num);
 
-            // System.out.println("MultiLayerCanvas.SingleLayerCanvas.addStep()");
-            // System.out.println(snapShotRecord.size());
+            System.out.println("add step  size : " + layerRecord.size() + " index : " + num);
 
-            BufferedImage bImage = SwingFXUtils.fromFXImage(shot, null);
-            BufferedImage bbImage = new BufferedImage((int) shot.getWidth(), (int) shot.getHeight(),
-                    BufferedImage.TYPE_INT_RGB);
-            Graphics2D g = bbImage.createGraphics();
-            g.drawImage(bImage, 0, 0, null);
-            g.dispose();
+            // BufferedImage bImage = SwingFXUtils.fromFXImage(shot, null);
+            // BufferedImage bbImage = new BufferedImage((int) shot.getWidth(), (int)
+            // shot.getHeight(),
+            // BufferedImage.TYPE_INT_RGB);
+            // Graphics2D g = bbImage.createGraphics();
+            // g.drawImage(bImage, 0, 0, null);
+            // g.dispose();
 
-            try {
-                ImageIO.write(bbImage, "png",
-                        new File("C:\\Users\\david\\Desktop\\test" + snapShotRecord.size() + ".png"));
-            } catch (IOException e) {
-                System.out.println(e.getMessage());
-            }
+            // try {
+            // ImageIO.write(bbImage, "png",
+            // new File("C:\\Users\\david\\Desktop\\test" + snapShotRecord.size() +
+            // ".png"));
+            // } catch (IOException e) {
+            // System.out.println(e.getMessage());
+            // }
         }
 
         public void undo() {
             if (!snapShotRecord.isEmpty()) {
-                System.out.println("MultiLayerCanvas.SingleLayerCanvas.undo()");
-                System.out.println("snapshot num = " + snapShotRecord.size());
+                // System.out.println("MultiLayerCanvas.SingleLayerCanvas.undo()");
+                // System.out.println("snapshot num = " + snapShotRecord.size());
                 Image lastImage = snapShotRecord.remove(snapShotRecord.size() - 1);
+                BufferedImage bImage = SwingFXUtils.fromFXImage(lastImage, null);
+                BufferedImage bbImage = new BufferedImage((int) lastImage.getWidth(), (int) lastImage.getHeight(),
+                        BufferedImage.TYPE_INT_RGB);
+                Graphics2D g = bbImage.createGraphics();
+                g.drawImage(bImage, 0, 0, null);
+                g.dispose();
+
+                try {
+                    ImageIO.write(bbImage, "png",
+                            new File("C:\\Users\\david\\Desktop\\test" + num + "-" + snapShotRecord.size() + ".png"));
+                } catch (IOException e) {
+                    System.out.println(e.getMessage());
+                }
+                System.out.println("undo index : " + num);
                 getGraphicsContext2D().drawImage(lastImage, 0, 0);
             }
         }
