@@ -1,4 +1,4 @@
-package src;
+package src.window;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -21,7 +21,7 @@ public class PictureViewer extends Application {
 
     @Override
     public void start(Stage arg0) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("resource\\PictureViewer.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("..\\resource\\PictureViewer.fxml"));
         Scene scene = new Scene(loader.load());
         arg0.setScene(scene);
         arg0.setTitle("Picture Viewer");

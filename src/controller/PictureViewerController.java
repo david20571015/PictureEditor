@@ -66,10 +66,9 @@ public class PictureViewerController {
     private ContextMenu cm;
     private File file;
     private FileWriter writer;
-    private FileReader reader;
 
     String[] pictureformat = { ".bmp", ".png", ".gif", ".jpeg", ".jpg" };
-    String[] exifcanread = { ".jpeg", ".gif", ".png"};
+    String[] exifcanread = { ".jpeg", ".gif", ".png" };
 
     @FXML
     private MenuItem openMenuItem;
@@ -124,7 +123,7 @@ public class PictureViewerController {
             BufferedReader reader = new BufferedReader(new FileReader(".//src//resource//favorite.txt"));
             String favoritepath = reader.readLine();
             while (favoritepath != null) {
-                System.out.println("reading");
+                // System.out.println("reading");
                 File f = new File(favoritepath);
                 if (f.exists()) {
                     favoriteTreeView.getRoot().getChildren().add(new TreeItem<File>(f));
@@ -145,7 +144,6 @@ public class PictureViewerController {
     }
 
     public void record() {
-        System.out.println("recording");
         try {
             writer = new FileWriter(".//src//resource//favorite.txt");
             if (!favoriteTreeView.getRoot().getChildren().isEmpty()) {
@@ -206,11 +204,11 @@ public class PictureViewerController {
 
     @FXML
     void aboutMenuItemOnAction(final ActionEvent event) {
-        try{
-            URL srcLink=new URL("https://github.com/david20571015/java_final_project");
+        try {
+            URL srcLink = new URL("https://github.com/david20571015/java_final_project");
             Desktop.getDesktop().browse(srcLink.toURI());
+        } catch (Exception e) {
         }
-        catch(Exception e){}
     }
 
     private void showFavoriteBox(MouseEvent e, TreeItem<File> folderPath) {
@@ -276,7 +274,6 @@ public class PictureViewerController {
         File[] images = path.listFiles(File::isFile);
         double fileCounter = 1;
         for (File image : images) {
-            // System.out.println(image.);
             Boolean ispictureformat = false;
             for (String s : pictureformat) {
                 if (image.toString().endsWith(s))
@@ -298,8 +295,9 @@ public class PictureViewerController {
                         if (e.getClickCount() == 1) {
                             Boolean isexifcanreBoolean = false;
                             for (String s : exifcanread) {
-                                if(image.toString().endsWith(s)){
-                                    isexifcanreBoolean = true;}
+                                if (image.toString().endsWith(s)) {
+                                    isexifcanreBoolean = true;
+                                }
                             }
                             if (isexifcanreBoolean) {
                                 try {
@@ -310,7 +308,7 @@ public class PictureViewerController {
                                 } catch (IOException ev) {
                                     print(ev);
                                 }
-                            }else{
+                            } else {
                                 imformationOfFileText.setText("");
                             }
                         }
