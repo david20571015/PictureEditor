@@ -18,17 +18,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
 import src.operation.Pen;
-import javafx.embed.swing.SwingFXUtils;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import javax.imageio.ImageIO;
 
 public class MultiLayerCanvas extends StackPane {
     public Pen pen = null;
@@ -218,9 +211,6 @@ public class MultiLayerCanvas extends StackPane {
 
     public void undo() {
         if (!layerRecord.isEmpty()) {
-            // System.out.println("MultiLayerCanvas.undo()");
-            // System.out.println("layer num = " + layerRecord.size() + " " +
-            // layerRecord.get(layerRecord.size() - 1));
             int lastSLCnum = layerRecord.remove(layerRecord.size() - 1).intValue();
             for (int i = 0; i < getChildren().size(); i++) {
                 SingleLayerCanvas slc = (SingleLayerCanvas) getChildren().get(i);
@@ -253,48 +243,13 @@ public class MultiLayerCanvas extends StackPane {
             snapshot(sp, shot);
             snapShotRecord.add(shot);
             layerRecord.add(num);
-
-            // System.out.println("add step size : " + layerRecord.size() + " index : " +
-            // num);
-
-            // BufferedImage bImage = SwingFXUtils.fromFXImage(shot, null);
-            // BufferedImage bbImage = new BufferedImage((int) shot.getWidth(), (int)
-            // shot.getHeight(),
-            // BufferedImage.TYPE_INT_RGB);
-            // Graphics2D g = bbImage.createGraphics();
-            // g.drawImage(bImage, 0, 0, null);
-            // g.dispose();
-
-            // try {
-            // ImageIO.write(bbImage, "png",
-            // new File("C:\\Users\\david\\Desktop\\test" + snapShotRecord.size() +
-            // ".png"));
-            // } catch (IOException e) {
-            // System.out.println(e.getMessage());
-            // }
         }
 
         public void undo() {
             if (!snapShotRecord.isEmpty()) {
-                // System.out.println("MultiLayerCanvas.SingleLayerCanvas.undo()");
-                // System.out.println("snapshot num = " + snapShotRecord.size());
                 Image lastImage = snapShotRecord.remove(snapShotRecord.size() - 1);
-                // BufferedImage bImage = SwingFXUtils.fromFXImage(lastImage, null);
-                // BufferedImage bbImage = new BufferedImage((int) lastImage.getWidth(), (int)
-                // lastImage.getHeight(),
-                // BufferedImage.TYPE_INT_RGB);
-                // Graphics2D g = bbImage.createGraphics();
-                // g.drawImage(bImage, 0, 0, null);
-                // g.dispose();
 
-                // try {
-                // ImageIO.write(bbImage, "png",
-                // new File("C:\\Users\\david\\Desktop\\test" + num + "-" +
-                // snapShotRecord.size() + ".png"));
-                // } catch (IOException e) {
-                // System.out.println(e.getMessage());
-                // }
-                // System.out.println("undo index : " + num);
+                getGraphicsContext2D().clearRect(0, 0, getWidth(), getHeight());
                 getGraphicsContext2D().drawImage(lastImage, 0, 0);
             }
         }

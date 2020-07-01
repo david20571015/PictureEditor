@@ -26,7 +26,6 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
@@ -123,7 +122,6 @@ public class PictureViewerController {
             BufferedReader reader = new BufferedReader(new FileReader(".//src//resource//favorite.txt"));
             String favoritepath = reader.readLine();
             while (favoritepath != null) {
-                // System.out.println("reading");
                 File f = new File(favoritepath);
                 if (f.exists()) {
                     favoriteTreeView.getRoot().getChildren().add(new TreeItem<File>(f));
@@ -322,7 +320,6 @@ public class PictureViewerController {
 
     private void print(Metadata metadata) {
         imformationOfFileText.setText("");
-        // imformationOfFileTextField.setText("");
         for (Directory directory : metadata.getDirectories()) {
             String total = new String();
             for (Tag tag : directory.getTags()) {
@@ -330,13 +327,7 @@ public class PictureViewerController {
                 int delete = s.indexOf(']', 1);
                 s = s.substring(delete + 2);
                 imformationOfFileText.setText(imformationOfFileText.getText() + s + "\n");
-                // String s = tag.toString();
-                // int delete = s.indexOf(']', 1);
-                // s = s.substring(delete + 2);
-                // total = total +s;
             }
-            // System.out.print(total);
-            // imformationOfFileTextField.setText(total);
             for (String error : directory.getErrors()) {
                 System.err.println("ERROR: " + error);
             }
