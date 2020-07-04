@@ -1,4 +1,4 @@
-# PictureViewer
+# PictureEditor
 
 ## Compile
 ```sh
