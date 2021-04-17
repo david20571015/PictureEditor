@@ -1,5 +1,8 @@
 # PictureEditor
 
+## Collaborators
+* [jacky0303](https://github.com/jacky0303)
+
 ## Compile
 ```sh
 $ javac --module-path=$env:PATH_TO_FX -encoding UTF-8 --add-modules=javafx.fxml,javafx.swing,javafx.controls -cp "metadata-extractor-2.14.0.jar;." .\src\controller\*.java .\src\window\*.java .\src\operation\*.java
